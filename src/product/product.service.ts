@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import fetch from 'node-fetch'
+import fetch from 'node-fetch';
 
 import { Product } from './product';
 
