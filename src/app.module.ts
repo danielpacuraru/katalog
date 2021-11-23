@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
+import { PuppeteerModule } from 'nest-puppeteer';
 
-import { ProductModule } from './product/product.module';
+import { KatalogModule } from './katalog/katalog.module';
 
 @Module({
   imports: [
-    ProductModule
+    PuppeteerModule.forRoot(),
+    KatalogModule
   ]
 })
 export class AppModule { }

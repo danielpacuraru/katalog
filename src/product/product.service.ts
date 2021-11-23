@@ -1,13 +1,48 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import fetch from 'node-fetch';
+import { InjectPage } from 'nest-puppeteer';
+import type { Page } from 'puppeteer';
+import * as fs from 'fs';
+import * as path from 'path';
 
 import { Product } from './product';
 
 @Injectable()
 export class ProductService {
 
+  constructor(@InjectPage() private readonly page: Page) { }
+
   public async getProduct(id: string): Promise<Product> {
     return await this._productInfo(id);
+  }
+
+  public async printKatalog(): Promise<Buffer> {
+    const content = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <h1>Invoice</h1>
+</body>
+</html>
+`;
+
+    await this.page.setContent(content);
+
+    const buffer = await this.page.pdf({
+      printBackground: true,
+      margin: {
+        left: '0px',
+        top: '0px',
+        right: '0px',
+        bottom: '0px'
+      }
+    });
+
+    return buffer;
   }
 
   private async _productInfo(id: string): Promise<Product> {
