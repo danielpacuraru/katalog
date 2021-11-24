@@ -2,15 +2,15 @@ import { Module } from '@nestjs/common';
 
 import { ProductController } from './controllers/product.controller';
 import { CatalogController } from './controllers/catalog.controller';
-import { ProductService } from './services/product.service';
+import { ScrapperService } from './services/scrapper.service';
 
 @Module({
   controllers: [
-    ProductController
+    ProductController,
     CatalogController
   ],
   providers: [
-    ProductService
+    ScrapperService
   ]
 })
 export class KatalogModule { }
