@@ -7,9 +7,9 @@ import { KatalogModule } from './katalog/katalog.module';
 @Module({
   imports: [
     PuppeteerModule.forRoot(<LaunchOptions>{
+      executablePath: '/usr/bin/chromium-browser',
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-      ignoreDefaultArgs: ['--disable-extensions']
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
     }),
     KatalogModule
   ]
