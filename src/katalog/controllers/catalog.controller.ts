@@ -1,11 +1,15 @@
 import { Controller, Get } from '@nestjs/common';
 
+import { PrintService } from '../services/print.service';
+
 @Controller('catalog')
 export class CatalogController {
 
-  @Get(':id')
+  constructor(private printService: PrintService) { }
+
+  @Get()
   async getCatalog() {
-    return { okish: true }
+    return await this.printService.printCatalog();
   }
 
 }
