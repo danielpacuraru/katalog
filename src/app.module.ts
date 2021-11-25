@@ -8,7 +8,8 @@ import { KatalogModule } from './katalog/katalog.module';
   imports: [
     PuppeteerModule.forRoot(<LaunchOptions>{
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+      ignoreDefaultArgs: ['--disable-extensions']
     }),
     KatalogModule
   ]
