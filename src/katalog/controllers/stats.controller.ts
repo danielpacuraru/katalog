@@ -1,21 +1,20 @@
 import { Controller, Get } from '@nestjs/common';
-import { Response } from 'express';
 
-import { ScrapperService } from '../services/scrapper.service';
+import { MongoService } from '../services/mongo.service';
 
 @Controller('stats')
 export class StatsController {
 
-  constructor(private scrapperService: ScrapperService) { }
+  constructor(private mongoService: MongoService) { }
 
   @Get('count')
   public async getStatsCount() {
-    return { count: this.scrapperService.products.length }
+    return { count: this.mongoService.products.length }
   }
 
   @Get('details')
   public async getStatsDetails() {
-    return this.scrapperService.products;
+    return this.mongoService.products;
   }
 
 }
