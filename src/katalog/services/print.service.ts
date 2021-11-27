@@ -1,21 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { InjectPage } from 'nest-puppeteer';
-import type { Page } from 'puppeteer';
 import { handlebars } from 'hbs';
 import * as path from 'path';
 import * as fs from 'fs';
+const puppeteer = require('puppeteer');
 
 import { Product } from '../models/product';
 
 @Injectable()
 export class PrintService {
 
-  constructor(@InjectPage() private readonly page: Page) { }
+  constructor() { }
 
   public async printCatalog(products: Product[]): Promise<Buffer> {
     const render = this.renderCatalog(products);
-    await this.page.setContent(render);
-    return await this.page.pdf({ printBackground: true });
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setContent(render);
+    const buffer = await page.pdf({ printBackground: true });
+    await browser.close();
+    return buffer;
   }
 
   public renderCatalog(products: Product[]): string {
