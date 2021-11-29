@@ -12,31 +12,27 @@
     }
 
     body {
-      width: 1000px;
-      padding:  30px;
-      box-sizing: border-box;
-      margin: 0 auto;
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    @page {
+      margin: 30px;
     }
 
     .list {
       width: 100%;
-      display: flex;
-      flex-wrap: wrap;
       list-style: none;
     }
 
     .list li {
       width: calc(33.333% - 20px);
-      margin: 30px 0 0 30px;
+      margin-bottom: 30px;
+      float: left;
     }
 
-    .list li:nth-child(3n+1) {
-      margin-left: 0;
-    }
-
-    .list li:nth-child(-n+3) {
-      margin-top: 0;
+    .list li:nth-child(3n),
+    .list li:nth-child(3n-1) {
+      margin-left: 30px;
     }
 
     .item {
@@ -45,6 +41,7 @@
       border: 1px solid #2DA3C3;
       box-sizing: border-box;
       position: relative;
+      break-inside: avoid;
     }
 
     .item .head {
@@ -69,8 +66,9 @@
 
     .item .body h2 {
       overflow: hidden;
-      font-size: 18px;
-      line-height: 24px;
+      font-weight: bold;
+      font-size: 17px;
+      line-height: 26px;
       color: #22303A;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -78,8 +76,9 @@
 
     .item .body p {
       overflow: hidden;
-      font-size: 15px;
-      line-height: 21px;
+      font-weight: normal;
+      font-size: 16px;
+      line-height: 20px;
       color: #4B5C6A;
       white-space: nowrap;
       text-overflow: ellipsis;

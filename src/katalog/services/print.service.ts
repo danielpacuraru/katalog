@@ -16,7 +16,7 @@ export class PrintService {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.setContent(render);
-    const buffer = await page.pdf({ printBackground: true });
+    const buffer = await page.pdf({ format: 'A4', printBackground: true });
     await browser.close();
     return buffer;
   }
