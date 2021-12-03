@@ -14,6 +14,7 @@ export class StatsController {
 
   @Get('details')
   public async getStatsDetails() {
+    const id = 1;
     return this.mongoService.products;
   }
 
