@@ -8,7 +8,8 @@ import * as Joi from 'joi';
       isGlobal: true,
       validationSchema: Joi.object({
         PORT: Joi.number(),
-        MODE: Joi.string()
+        MODE: Joi.string(),
+        JWT_SECRET: Joi.string()
       }),
       validationOptions: {
         allowUnknown: true,
