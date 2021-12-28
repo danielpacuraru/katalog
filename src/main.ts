@@ -9,6 +9,6 @@ async function bootstrap(): Promise<void> {
 
   app.enableCors();
 
-  await app.listen(config.get('server.port'));
+  await app.listen(config.get('PORT'));
 }
 bootstrap();

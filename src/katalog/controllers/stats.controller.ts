@@ -11,7 +11,7 @@ export class StatsController {
   @UseGuards(JwtAuthGuard)
   @Get()
   public async getStats() {
-    return { count: this.config.get('server.port'), total: 5, mode: this.config.get('server.mode') }
+    return { count: this.config.get('PORT'), total: 5, mode: this.config.get('MODE') }
   }
 
   @Get('token')
