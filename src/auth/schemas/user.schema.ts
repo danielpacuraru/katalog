@@ -5,14 +5,16 @@ export type UserDocument = User & Document;
 
 @Schema()
 export class User {
+
+  @Prop()
+  name: string;
+
   @Prop()
   email: string;
 
   @Prop()
   password: number;
 
-  @Prop()
-  name: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

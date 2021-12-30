@@ -1,7 +1,8 @@
-import { Controller, UseGuards, Post, Get } from '@nestjs/common';
+import { Controller, UseGuards, Post, Get, Body } from '@nestjs/common';
 
 import { AuthService } from '../services/auth.service';
 import { LocalAuthGuard } from '../../auth/guards/local-auth.guard';
+import { SignupDto } from '../dtos/signup.dto';
 
 @Controller()
 export class AuthController {
@@ -17,6 +18,12 @@ export class AuthController {
   @Get('me')
   public async me() {
     return { message: 'hi' }
+  }
+
+  @Post('signup')
+  public async signup(@Body() signupDto: SignupDto) {
+    console.log('signup');
+    return await this.authService.signup(signupDto);
   }
 
 }
