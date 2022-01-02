@@ -21,6 +21,7 @@ export class AuthService {
 
   async signup(data: SignupDto): Promise<void> {
     console.log(data);
+    this.userService.add(data);
   }
 
 }
