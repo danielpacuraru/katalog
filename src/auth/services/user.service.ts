@@ -12,7 +12,11 @@ export class UserService {
     @InjectModel(User.name) private userModel: Model<UserDocument>
   ) { }
 
-  async add(signupDto: SignupDto): Promise<User> {
+  public async findByEmail(email: string): Promise<User> {
+    return this.userModel.findOne({ email }).exec();
+  }
+
+  public async add(signupDto: SignupDto): Promise<User> {
     const myUser = new this.userModel(signupDto);
     return myUser.save();
   }
