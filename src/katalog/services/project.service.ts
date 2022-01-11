@@ -12,9 +12,9 @@ export class ProjectService {
     @InjectModel(Project.name) private projectModel: Model<ProjectDocument>
   ) { }
 
-  createProject(data: CreateProjectDto): Promise<Project> {
-    const project = new this.projectModel(data);
-    return project.save();
+  async create(data: CreateProjectDto, userId: string): Promise<Project> {
+    const newProject = new this.projectModel(data);
+    return await newProject.save();
   }
 
 }

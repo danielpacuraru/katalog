@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 
 export type ProjectDocument = Project & Document;
 
-@Schema()
+@Schema({ versionKey: false })
 export class Project {
 
   @Prop()

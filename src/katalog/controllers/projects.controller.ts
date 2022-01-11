@@ -2,6 +2,7 @@ import { Controller, UseGuards, Get, Post, Body } from '@nestjs/common';
 
 import { ProjectService } from '../services/project.service';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { UserID } from '../../auth/decorators/user-id.decorator';
 import { CreateProjectDto } from '../dtos/create-project.dto';
 
 @Controller('projects')
@@ -13,15 +14,17 @@ export class ProjectsController {
 
   //@UseGuards(JwtAuthGuard)
   @Get()
-  public async getProjects() {
+  async getProjects() {
     return [];
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   async create(
-    @Body() data: CreateProjectDto
+    @Body() data: CreateProjectDto,
+    @UserID() userId: string
   ) {
-    return await this.projectService.createProject(data);
+    return await this.projectService.create(data, userId);
   }
 
 }
