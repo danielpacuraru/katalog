@@ -9,23 +9,27 @@ export class AuthController {
 
   constructor(private authService: AuthService) { }
 
+  @Post('signup')
+  async signup(
+    @Body() signupDto: SignupDto
+  ): Promise<void> {
+    const x = await this.authService.createUser(signupDto);
+    console.log(x);
+  }
+
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  public async login(@Req() req) {
+  async login(@Req() req) {
     const userId = req.user._id.toString();
     const token = await this.authService.generateToken(userId);
     return { token };
   }
 
   @Get('me')
-  public async me() {
+  async me() {
     return { message: 'hi' }
   }
 
-  @Post('signup')
-  public async signup(@Body() signupDto: SignupDto) {
-    console.log('signup');
-    return await this.authService.signup(signupDto);
-  }
+  
 
 }

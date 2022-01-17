@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { UserService } from '../services/user.service';
@@ -13,8 +13,23 @@ export class AuthService {
     private userService: UserService
   ) { }
 
+  public async createUser(signupDto: SignupDto): Promise<User> {
+    const userExists: boolean = await this.userService.findByEmail(signupDto.email) !== null;
+
+    if(userExists) {
+      throw new ConflictException();
+    }
+
+    return this.userService.create(signupDto);
+  }
+
   public async validateUser(email: string, password: string): Promise<User> {
     const user = await this.userService.findByEmail(email);
+    return user;
+  }
+
+  public async validateUserByPayload(payload: any): Promise<User> {
+    const user = await this.userService.findByEmail('email');
     return user;
   }
 
@@ -22,9 +37,9 @@ export class AuthService {
     return this.jwtService.sign({ sub: id });
   }
 
-  async signup(data: SignupDto): Promise<void> {
-    console.log(data);
-    this.userService.add(data);
-  }
+  // async createUser(data: SignupDto): Promise<void> {
+  //   console.log(data);
+  //   this.userService.add(data);
+  // }
 
 }

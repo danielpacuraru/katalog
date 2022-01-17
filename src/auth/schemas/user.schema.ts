@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 
 export type UserDocument = User & Document;
 
-@Schema()
+@Schema({ versionKey: false })
 export class User {
 
   @Prop()
@@ -13,7 +13,10 @@ export class User {
   email: string;
 
   @Prop()
-  password: number;
+  salt: string;
+
+  @Prop()
+  password: string;
 
 }
 

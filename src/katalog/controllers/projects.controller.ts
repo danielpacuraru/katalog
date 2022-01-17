@@ -1,4 +1,5 @@
 import { Controller, UseGuards, Get, Post, Body } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 import { ProjectService } from '../services/project.service';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -12,9 +13,12 @@ export class ProjectsController {
     private projectService: ProjectService
   ) { }
 
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get()
-  async getProjects() {
+  async getProjects(
+    @UserID() userId: string
+  ) {
+    console.log(userId);
     return [];
   }
 
