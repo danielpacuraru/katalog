@@ -1,9 +1,14 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 import { UserService } from '../services/user.service';
 import { User } from '../schemas/user.schema';
 import { SignupDto } from '../dtos/signup.dto';
+
+interface Payload {
+  sub: string;
+}
 
 @Injectable()
 export class AuthService {
@@ -23,9 +28,22 @@ export class AuthService {
     return this.userService.create(signupDto);
   }
 
-  public async validateUser(email: string, password: string): Promise<User> {
-    const user = await this.userService.findByEmail(email);
+  public async validateUserByCredentials(email: string, password: string): Promise<User> {
+    const user: User = await this.userService.findByEmail(email);
+
+    if(!user || user.password !== await bcrypt.hash(password, user.salt)) {
+      throw new UnauthorizedException();
+    }
+
     return user;
+  }
+
+  public async generateToken(id: string): Promise<string> {
+    const payload: Payload = {
+      sub: id
+    };
+
+    return this.jwtService.sign(payload);
   }
 
   public async validateUserByPayload(payload: any): Promise<User> {
@@ -33,9 +51,7 @@ export class AuthService {
     return user;
   }
 
-  public async generateToken(id: string) {
-    return this.jwtService.sign({ sub: id });
-  }
+  
 
   // async createUser(data: SignupDto): Promise<void> {
   //   console.log(data);
