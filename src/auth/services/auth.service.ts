@@ -6,7 +6,7 @@ import { UserService } from '../services/user.service';
 import { User } from '../schemas/user.schema';
 import { SignupDto } from '../dtos/signup.dto';
 
-interface Payload {
+export interface Payload {
   sub: string;
 }
 
@@ -46,8 +46,14 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
-  public async validateUserByPayload(payload: any): Promise<User> {
-    const user = await this.userService.findByEmail('email');
+  public async validateUserByPayload(payload: Payload): Promise<User> {
+    const userId: string = payload.sub;
+    const user: User = await this.userService.findById(userId);
+
+    if(!user) {
+      throw new UnauthorizedException();
+    }
+
     return user;
   }
 

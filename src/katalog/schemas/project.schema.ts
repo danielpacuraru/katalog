@@ -12,6 +12,12 @@ export class Project {
   @Prop()
   title: string;
 
+  @Prop()
+  description: string;
+
+  @Prop()
+  userId: string;
+
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);

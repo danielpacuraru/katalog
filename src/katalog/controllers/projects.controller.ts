@@ -15,7 +15,7 @@ export class ProjectsController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  async getProjects(
+  async getAll(
     @UserID() userId: string
   ) {
     console.log(userId);

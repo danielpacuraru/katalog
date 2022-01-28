@@ -28,4 +28,8 @@ export class UserService {
     return this.userModel.findOne({ email }).exec();
   }
 
+  public async findById(id: string): Promise<User> {
+    return this.userModel.findById(id).exec();
+  }
+
 }
