@@ -1,7 +1,8 @@
-import { Controller, UseGuards, Get, Post, Body } from '@nestjs/common';
+import { Controller, UseGuards, Get, Post, Param, Body } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import { ProjectService } from '../services/project.service';
+import { EfobasenService } from '../services/efobasen.service';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { UserID } from '../../auth/decorators/user-id.decorator';
 import { CreateProjectDto } from '../dtos/create-project.dto';
@@ -10,7 +11,8 @@ import { CreateProjectDto } from '../dtos/create-project.dto';
 export class ProjectsController {
 
   constructor(
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private efobasen: EfobasenService
   ) { }
 
   @UseGuards(JwtAuthGuard)
@@ -18,8 +20,19 @@ export class ProjectsController {
   async getAll(
     @UserID() userId: string
   ) {
-    console.log(userId);
-    return [];
+    return await this.projectService.getAll(userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  async get(
+    @Param('id') id: string,
+    @UserID() userId: string
+  ) {
+    console.log('project id = ', id);
+    const res: any = await this.projectService.get(id, userId);
+    res.articles = [];
+    return res;
   }
 
   @UseGuards(JwtAuthGuard)

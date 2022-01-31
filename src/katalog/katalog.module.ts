@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { Project, ProjectSchema } from './schemas/project.schema';
 import { ProjectService } from './services/project.service';
+import { EfobasenService } from './services/efobasen.service';
 import { ProjectsController } from './controllers/projects.controller';
 import { StatsController } from './controllers/stats.controller';
 
@@ -13,7 +14,8 @@ import { StatsController } from './controllers/stats.controller';
     ])
   ],
   providers: [
-    ProjectService
+    ProjectService,
+    EfobasenService
   ],
   controllers: [
     ProjectsController,

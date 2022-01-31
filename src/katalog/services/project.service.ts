@@ -12,6 +12,27 @@ export class ProjectService {
     @InjectModel(Project.name) private projectModel: Model<ProjectDocument>
   ) { }
 
+  async getAll(userId: string): Promise<Project[]> {
+    const projects: Project[] = await this.projectModel.find({ userId }).exec();
+    let res = projects.map(p => p['_doc']);
+    res.forEach(p => {
+      p.id = p._id;
+      delete p.userId;
+      delete p._id;
+    });
+    return res;
+  }
+
+  async get(id: string, userId: string): Promise<Project> {
+    const project: Project = await this.projectModel.findById(id).exec();
+    console.log(project);
+    let res = project['_doc'];
+    res.id = res._id;
+    delete res.userId;
+    delete res._id;
+    return res;
+  }
+
   async create(createProjectDto: CreateProjectDto, userId: string): Promise<Project> {
     const project = new Project();
 
