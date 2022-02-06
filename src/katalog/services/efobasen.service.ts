@@ -12,24 +12,25 @@ export class EfobasenService {
     @InjectModel(Efobasen.name) private efobasenModel: Model<EfobasenDocument>
   ) { }
 
-  async getByTag(tag: string) {
-    const foundArticle = await this.efobasenModel.findOne({ tag }).exec();
+  async getByTag(tag: string): Promise<Efobasen> {
+    const dbEfobasen: Efobasen = await this.efobasenModel.findOne({ tag }).lean();
 
-    console.log(foundArticle);
-
-    if(foundArticle) {
-      return foundArticle;
+    if(dbEfobasen) {
+      delete dbEfobasen['_id'];
+      return dbEfobasen;
     }
 
-    const newArticle = await this.findByTag(tag);
+    const efobasen: Efobasen = await this.findByTag(tag);
 
-    const newA = new this.efobasenModel(newArticle);
-    const x = await newA.save();
+    if(efobasen) {
+      const newEfobasen = new this.efobasenModel(efobasen);
+      await newEfobasen.save();
+    }
 
-    return x;
+    return efobasen;
   }
 
-  private async findByTag(tag: string) {
+  private async findByTag(tag: string): Promise<Efobasen> {
     const url = `https://efobasen.efo.no/API/VisProdukt/HentProduktinfo?produktnr=${tag}`;
     const response = await fetch(url);
     const data = await response.json();

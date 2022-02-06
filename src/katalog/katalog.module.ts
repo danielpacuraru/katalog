@@ -9,9 +9,9 @@ import { EfobasenService } from './services/efobasen.service';
 import { ProjectService } from './services/project.service';
 import { ArticleService } from './services/article.service';
 
-import { ProjectsController } from './controllers/projects.controller';
-import { ArticlesController } from './controllers/articles.controller';
-import { StatsController } from './controllers/stats.controller';
+import { ProjectController } from './controllers/project.controller';
+import { ArticleController } from './controllers/article.controller';
+import { KatalogController } from './controllers/katalog.controller';
 
 @Module({
   imports: [
@@ -27,9 +27,9 @@ import { StatsController } from './controllers/stats.controller';
     ArticleService
   ],
   controllers: [
-    ProjectsController,
-    ArticlesController,
-    StatsController
+    ProjectController,
+    ArticleController,
+    KatalogController
   ]
 })
 export class KatalogModule { }

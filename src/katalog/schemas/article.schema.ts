@@ -24,6 +24,9 @@ export class Article {
   @Prop()
   doc: string;
 
+  @Prop()
+  projectId: string;
+
 }
 
 export const ArticleSchema = SchemaFactory.createForClass(Article);

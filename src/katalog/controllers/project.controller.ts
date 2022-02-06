@@ -8,7 +8,7 @@ import { UserID } from '../../auth/decorators/user-id.decorator';
 import { CreateProjectDto } from '../dtos/create-project.dto';
 
 @Controller('projects')
-export class ProjectsController {
+export class ProjectController {
 
   constructor(
     private projectService: ProjectService,
