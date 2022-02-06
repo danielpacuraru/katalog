@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Get, Param } from '@nestjs/common';
+import { Controller, UseGuards, Get, Param, Render } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -8,6 +8,7 @@ export class KatalogController {
 
   @UseGuards(JwtAuthGuard)
   @Get('minimal')
+  @Render('katalog')
   async minimal(
     @Param('id') projectId: string
   ) {
