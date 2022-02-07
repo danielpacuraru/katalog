@@ -6,6 +6,7 @@ import { Project, ProjectSchema } from './schemas/project.schema';
 import { Article, ArticleSchema } from './schemas/article.schema';
 
 import { EfobasenService } from './services/efobasen.service';
+import { KatalogService } from './services/katalog.service';
 import { ProjectService } from './services/project.service';
 import { ArticleService } from './services/article.service';
 
@@ -23,6 +24,7 @@ import { KatalogController } from './controllers/katalog.controller';
   ],
   providers: [
     EfobasenService,
+    KatalogService,
     ProjectService,
     ArticleService
   ],

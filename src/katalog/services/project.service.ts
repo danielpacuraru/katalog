@@ -25,7 +25,6 @@ export class ProjectService {
 
   async get(id: string, userId: string): Promise<Project> {
     const project: Project = await this.projectModel.findById(id).exec();
-    console.log(project);
     let res = project['_doc'];
     res.id = res._id;
     delete res.userId;
