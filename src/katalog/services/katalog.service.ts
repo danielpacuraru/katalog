@@ -11,20 +11,9 @@ export class KatalogService {
   async minimal(res: Response, project: Project, articles: Article[]): Promise<Buffer> {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
+    const content = await this.render(res, project, articles);
 
-    await page.setContent(`
-      <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Katalog</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-<body>
-  <h1>Hello world!</h1>
-</body>
-</html>
-    `);
+    await page.setContent(content);
 
     const pdfBuffer = await page.pdf();
 
@@ -34,7 +23,7 @@ export class KatalogService {
     return pdfBuffer;
   }
 
-  async render(res: Response): Promise<string> {
+  async render(res: Response, project: Project, articles: Article[]): Promise<string> {
     return new Promise((resolve, reject) => {
       res.render('katalog', {}, (err, html) => {
         if(err) return reject(err);

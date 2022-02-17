@@ -10,6 +10,7 @@ import { KatalogService } from './services/katalog.service';
 import { ProjectService } from './services/project.service';
 import { ArticleService } from './services/article.service';
 
+import { EfobasenController } from './controllers/efobasen.controller';
 import { ProjectController } from './controllers/project.controller';
 import { ArticleController } from './controllers/article.controller';
 import { KatalogController } from './controllers/katalog.controller';
@@ -29,6 +30,7 @@ import { KatalogController } from './controllers/katalog.controller';
     ArticleService
   ],
   controllers: [
+    EfobasenController,
     ProjectController,
     ArticleController,
     KatalogController

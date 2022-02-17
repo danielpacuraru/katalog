@@ -13,7 +13,7 @@ export class ArticleController {
 
   constructor(
     private articleService: ArticleService,
-    private efobasen: EfobasenService
+    private efobasenService: EfobasenService
   ) { }
 
   @UseGuards(JwtAuthGuard)
@@ -30,7 +30,7 @@ export class ArticleController {
     @Param('id') projectId: string,
     @Body() data: CreateArticleDto
   ) {
-    const efobasen: Efobasen = await this.efobasen.getByTag(data.tag);
+    const efobasen: Efobasen = await this.efobasenService.getByTag(data.tag);
 
     if(!efobasen) {
       throw new NotFoundException();

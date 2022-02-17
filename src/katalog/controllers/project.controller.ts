@@ -2,7 +2,6 @@ import { Controller, UseGuards, Get, Post, Param, Body } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import { ProjectService } from '../services/project.service';
-import { EfobasenService } from '../services/efobasen.service';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { UserID } from '../../auth/decorators/user-id.decorator';
 import { CreateProjectDto } from '../dtos/create-project.dto';
@@ -11,8 +10,7 @@ import { CreateProjectDto } from '../dtos/create-project.dto';
 export class ProjectController {
 
   constructor(
-    private projectService: ProjectService,
-    private efobasen: EfobasenService
+    private projectService: ProjectService
   ) { }
 
   @UseGuards(JwtAuthGuard)
