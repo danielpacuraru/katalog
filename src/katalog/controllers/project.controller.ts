@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Get, Post, Param, Body } from '@nestjs/common';
+import { Controller, UseGuards, Get, Post, Param, Body, NotFoundException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import { ProjectService } from '../services/project.service';
@@ -18,7 +18,8 @@ export class ProjectController {
   async getAll(
     @UserID() userId: string
   ) {
-    return await this.projectService.getAll(userId);
+    const projects = await this.projectService.getAll(userId);
+    return projects;
   }
 
   @UseGuards(JwtAuthGuard)
@@ -27,10 +28,13 @@ export class ProjectController {
     @Param('id') id: string,
     @UserID() userId: string
   ) {
-    console.log('project id = ', id);
-    const res: any = await this.projectService.get(id, userId);
-    res.articles = [];
-    return res;
+    const project = await this.projectService.get(id, userId);
+
+    if(!project) {
+      throw new NotFoundException();
+    }
+
+    return project;
   }
 
   @UseGuards(JwtAuthGuard)
@@ -39,7 +43,8 @@ export class ProjectController {
     @Body() data: CreateProjectDto,
     @UserID() userId: string
   ) {
-    return await this.projectService.create(data, userId);
+    const project = await this.projectService.create(data, userId);
+    return project;
   }
 
 }

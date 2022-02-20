@@ -3,7 +3,12 @@ import { Document } from 'mongoose';
 
 export type ProjectDocument = Project & Document;
 
-@Schema({ versionKey: false })
+@Schema({
+  versionKey: false,
+  toJSON: {
+    transform: (doc, ret) => { ret.id = ret._id.toString(); delete ret._id; delete ret.userId; return ret; }
+  }
+})
 export class Project {
 
   @Prop()
@@ -14,6 +19,9 @@ export class Project {
 
   @Prop()
   description: string;
+
+  @Prop()
+  isReady: boolean;
 
   @Prop()
   userId: string;

@@ -14,42 +14,30 @@ export class ProjectService {
 
   async getAll(userId: string): Promise<Project[]> {
     const projects: Project[] = await this.projectModel.find({ userId }).exec();
-    let res = projects.map(p => p['_doc']);
-    res.forEach(p => {
-      p.id = p._id;
-      delete p.userId;
-      delete p._id;
-    });
-    return res;
+    return projects;
   }
 
   async get(id: string, userId: string): Promise<Project> {
     const project: Project = await this.projectModel.findById(id).exec();
-    let res = project['_doc'];
-    res.id = res._id;
-    delete res.userId;
-    delete res._id;
-    return res;
+
+    if(project.userId !== userId) {
+      return;
+    }
+
+    return project;
   }
 
   async create(createProjectDto: CreateProjectDto, userId: string): Promise<Project> {
-    const project = new Project();
+    const newProject = new Project();
 
-    project.name = createProjectDto.name;
-    project.title = '';
-    project.description = '';
-    project.userId = userId;
+    newProject.name = createProjectDto.name;
+    newProject.title = '';
+    newProject.description = '';
+    newProject.isReady = false;
+    newProject.userId = userId;
 
-    const newProject = new this.projectModel(project);
-    const x =  await newProject.save();
-    const y = x.toJSON();
-    y.id = y._id;
-
-    delete y._id;
-    delete y.userId;
-
-    console.log(y);
-    return y;
+    const project: Project = await new this.projectModel(newProject).save();
+    return project;
   }
 
 }

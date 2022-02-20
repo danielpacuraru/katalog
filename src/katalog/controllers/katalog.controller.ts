@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Get, Param, Res } from '@nestjs/common';
+import { Controller, UseGuards, Get, Post, Param, Res } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 
@@ -14,7 +14,7 @@ export class KatalogController {
   constructor(
     private projectService: ProjectService,
     private articleService: ArticleService,
-    private katalog: KatalogService
+    private katalogService: KatalogService
   ) { }
 
   @UseGuards(JwtAuthGuard)
@@ -35,7 +35,7 @@ export class KatalogController {
     console.log('articles');
     console.log(articles);
 
-    const buffer: Buffer = await this.katalog.minimal(res, project, articles);
+    const buffer: Buffer = await this.katalogService.minimal(res, project, articles);
 
     res.set({
       'Content-Type': 'application/pdf',
@@ -48,5 +48,18 @@ export class KatalogController {
 
     res.end(buffer);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post()
+  async build(
+    @UserID() userId: string,
+    @Param('id') projectId: string
+  ) {
+    const project = await this.projectService.get(projectId, userId);
+    const articles = await this.articleService.getAll(projectId);
+    return this.katalogService.build(project, articles);
+  }
+
+
 
 }
