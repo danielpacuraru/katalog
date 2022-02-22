@@ -1,6 +1,8 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
+import { ProjectStatus } from '../enums/project-status.enum';
+
 export type ProjectDocument = Project & Document;
 
 @Schema({
@@ -21,7 +23,7 @@ export class Project {
   description: string;
 
   @Prop()
-  isReady: boolean;
+  status: ProjectStatus;
 
   @Prop()
   userId: string;

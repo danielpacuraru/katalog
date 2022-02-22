@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 
 import { Project, ProjectDocument } from '../schemas/project.schema';
 import { CreateProjectDto } from '../dtos/create-project.dto';
+import { ProjectStatus } from '../enums/project-status.enum';
 
 @Injectable()
 export class ProjectService {
@@ -33,7 +34,7 @@ export class ProjectService {
     newProject.name = createProjectDto.name;
     newProject.title = '';
     newProject.description = '';
-    newProject.isReady = false;
+    newProject.status = ProjectStatus.EMPTY;
     newProject.userId = userId;
 
     const project: Project = await new this.projectModel(newProject).save();
