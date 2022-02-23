@@ -80,6 +80,10 @@ export class EfobasenService {
       obj.tag = data['Produktinfo']['Produktnr'].toString();
       obj.name = data['Produktinfo']['Varetekst'];
       obj.maker = data['Produktinfo']['Fabrikat'];
+
+      const imgId = data['Produktinfo']['Bilder'].length ? data['Produktinfo']['Bilder'][0] : null;
+      if(imgId) obj.thumbnail = `https://efobasen.efo.no/API/Produktfiler/Skalert?id=${imgId}&w=350&h=350&m=3`;
+
       const pdfObj1 = data['Produktskjema']['Skjema']['Grupper'].find(x => x['Navn'] === 'Dokumenter');
       const pdfObj2 = pdfObj1['Felter'].find(x => x['Navn'] === 'fdv');
       const pdfId = pdfObj2['Verdi']['FilId'];
@@ -88,11 +92,6 @@ export class EfobasenService {
     catch(e) {
       return;
     }
-
-    try {
-      obj.thumbnail = 'https://efobasen.efo.no/API/Produktfiler/Skalert/' + data['Produktinfo']['Produktnr'] + '.jpg?id=' + data['Produktinfo']['Bilder'][0] + '&w=1000&h=1000&m=5';
-    }
-    catch(e) { }
 
     return obj;
   }

@@ -41,4 +41,15 @@ export class ProjectService {
     return project;
   }
 
+  async setStatus(id: string, status: ProjectStatus): Promise<ProjectDocument> {
+    const project: ProjectDocument = await this.projectModel.findById(id).exec();
+
+    /*if(project.userId !== userId) {
+      return;
+    }*/
+
+    project.status = status;
+    return project.save();
+  }
+
 }

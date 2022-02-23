@@ -35,12 +35,13 @@ export class KatalogService {
     });
   }
 
-  async build(project: Project, articles: Article[]): Promise<void> {
+  async build(project: Project, articles: Article[]): Promise<boolean> {
+    const id: string = project['_id'];
     const name: string = project.name;
     const codes: string[] = articles.map(a => a.code).filter((v, i, a) => { return a.indexOf(v) === i });
 
     const projectPath = join(__dirname, '..', '..', 'projects', name);
-    const projectZipPath = join(__dirname, '..', '..', 'projects', `${name}.zip`);
+    const projectZipPath = join(__dirname, '..', '..', 'projects', `${id}.zip`);
 
     // remove project folder and zip file if they exist
     await rm(projectPath, { recursive: true, force: true });
@@ -58,7 +59,7 @@ export class KatalogService {
     // create project docs
     for(const article of articles) {
       const docPath = join(__dirname, '..', '..', 'pdf', `${article.tag}.pdf`);
-      const projectDocPath = join(projectPath, article.code, `${article.code}_${article.tag}.pdf`);//join(__dirname, '..', '..', 'projects', name, article.code, `${article.code}_${article.tag}.pdf`);
+      const projectDocPath = join(projectPath, article.code, `${article.code}_${article.tag}.pdf`);
       await copyFile(docPath, projectDocPath);
     }
 
@@ -67,6 +68,8 @@ export class KatalogService {
 
     // remove project folder
     await rm(projectPath, { recursive: true, force: true });
+
+    return true;
   }
 
 }

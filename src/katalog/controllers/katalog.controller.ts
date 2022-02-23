@@ -7,6 +7,7 @@ import { ArticleService } from '../services/article.service';
 import { KatalogService } from '../services/katalog.service';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { UserID } from '../../auth/decorators/user-id.decorator';
+import { ProjectStatus } from '../enums/project-status.enum';
 
 @Controller('projects/:id/katalog')
 export class KatalogController {
@@ -16,6 +17,21 @@ export class KatalogController {
     private articleService: ArticleService,
     private katalogService: KatalogService
   ) { }
+
+  @UseGuards(JwtAuthGuard)
+  @Post()
+  async build(
+    @UserID() userId: string,
+    @Param('id') projectId: string
+  ) {
+    this.projectService.setStatus(projectId, ProjectStatus.QUEUE);
+
+    const project = await this.projectService.get(projectId, userId);
+    const articles = await this.articleService.getAll(projectId);
+    await this.katalogService.build(project, articles);
+
+    this.projectService.setStatus(projectId, ProjectStatus.READY);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Get('minimal')
@@ -50,16 +66,12 @@ export class KatalogController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post()
-  async build(
+  @Post('fix')
+  async fix(
     @UserID() userId: string,
     @Param('id') projectId: string
   ) {
-    const project = await this.projectService.get(projectId, userId);
-    const articles = await this.articleService.getAll(projectId);
-    return this.katalogService.build(project, articles);
+    await this.articleService.do();
   }
-
-
 
 }

@@ -45,4 +45,17 @@ export class ArticleService {
 
     return res;
   }
+
+  async do() {
+    const list = await this.articleModel.find();
+
+    for(var doc of list) {
+      const codes = ['411', '422', '420', '430', '432'];
+      const r = Math.floor(Math.random() * 5);
+      doc.code = codes[r];
+      await doc.save();
+    }
+
+    return {};
+  }
 }
