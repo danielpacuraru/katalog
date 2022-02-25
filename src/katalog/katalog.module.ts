@@ -5,6 +5,8 @@ import { Efobasen, EfobasenSchema } from './schemas/efobasen.schema';
 import { Project, ProjectSchema } from './schemas/project.schema';
 import { Article, ArticleSchema } from './schemas/article.schema';
 
+import { ProjectRepository } from './repositories/project.repository';
+
 import { EfobasenService } from './services/efobasen.service';
 import { KatalogService } from './services/katalog.service';
 import { ProjectService } from './services/project.service';
@@ -24,6 +26,7 @@ import { KatalogController } from './controllers/katalog.controller';
     ])
   ],
   providers: [
+    ProjectRepository,
     EfobasenService,
     KatalogService,
     ProjectService,

@@ -7,7 +7,7 @@ import { ArticleService } from '../services/article.service';
 import { KatalogService } from '../services/katalog.service';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { UserID } from '../../auth/decorators/user-id.decorator';
-import { ProjectStatus } from '../enums/project-status.enum';
+import { ProjectStatus } from '../entities/project-status.enum';
 
 @Controller('projects/:id/katalog')
 export class KatalogController {

@@ -1,7 +1,7 @@
 import { Controller, Post, Body } from '@nestjs/common';
 
 import { EfobasenService } from '../services/efobasen.service';
-import { CreateArticleDto } from '../dtos/create-article.dto';
+import { CreateArticleDto } from '../entities/create-article.dto';
 
 @Controller('efobasen')
 export class EfobasenController {

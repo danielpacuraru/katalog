@@ -2,30 +2,25 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
+import { ProjectRepository } from '../repositories/project.repository';
 import { Project, ProjectDocument } from '../schemas/project.schema';
-import { CreateProjectDto } from '../dtos/create-project.dto';
-import { ProjectStatus } from '../enums/project-status.enum';
+import { CreateProjectDto } from '../entities/create-project.dto';
+import { ProjectStatus } from '../entities/project-status.enum';
 
 @Injectable()
 export class ProjectService {
 
   constructor(
+    private projectRepository: ProjectRepository,
     @InjectModel(Project.name) private projectModel: Model<ProjectDocument>
   ) { }
 
   async getAll(userId: string): Promise<Project[]> {
-    const projects: Project[] = await this.projectModel.find({ userId }).exec();
-    return projects;
+    return await this.projectRepository.getAll(userId);
   }
 
   async get(id: string, userId: string): Promise<Project> {
-    const project: Project = await this.projectModel.findById(id).exec();
-
-    if(project.userId !== userId) {
-      return;
-    }
-
-    return project;
+    return await this.projectRepository.get(id, userId);
   }
 
   async create(createProjectDto: CreateProjectDto, userId: string): Promise<Project> {

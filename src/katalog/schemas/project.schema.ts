@@ -1,7 +1,7 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-import { ProjectStatus } from '../enums/project-status.enum';
+import { ProjectStatus } from '../entities/project-status.enum';
 
 export type ProjectDocument = Project & Document;
 
