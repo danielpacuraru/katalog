@@ -1,7 +1,8 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, SchemaTypes, Types } from 'mongoose';
 
 import { ProjectStatus } from '../entities/project-status.enum';
+import { User } from '../../auth/schemas/user.schema';
 
 export type ProjectDocument = Project & Document;
 
@@ -13,20 +14,20 @@ export type ProjectDocument = Project & Document;
 })
 export class Project {
 
-  @Prop()
+  @Prop({ required: true })
   name: string;
 
-  @Prop()
-  title: string;
-
-  @Prop()
-  description: string;
-
-  @Prop()
+  @Prop({ required: true, default: ProjectStatus.EMPTY })
   status: ProjectStatus;
 
   @Prop()
-  userId: string;
+  title?: string;
+
+  @Prop()
+  description?: string;
+
+  @Prop({ required: true, type: SchemaTypes.ObjectId, ref: 'User' })
+  userId: User;
 
 }
 
