@@ -1,19 +1,15 @@
 import { Controller, UseGuards, Get, Post, Param, Body, NotFoundException } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 
-import { ArticleService } from '../services/article.service';
-import { EfobasenService } from '../services/efobasen.service';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { UserID } from '../../auth/decorators/user-id.decorator';
+import { ArticleService } from '../services/article.service';
 import { CreateArticleDto } from '../entities/create-article.dto';
-import { Efobasen } from '../schemas/efobasen.schema';
 
 @Controller('projects/:id/articles')
 export class ArticleController {
 
   constructor(
-    private articleService: ArticleService,
-    private efobasenService: EfobasenService
+    private articleService: ArticleService
   ) { }
 
   @UseGuards(JwtAuthGuard)
@@ -30,7 +26,7 @@ export class ArticleController {
     @Param('id') projectId: string,
     @Body() data: CreateArticleDto
   ) {
-    const efobasen: Efobasen = await this.efobasenService.getByTag(data.tag);
+    /*const efobasen = await this.efobasenService.getByTag(data.tag);
 
     if(!efobasen) {
       throw new NotFoundException();
@@ -42,7 +38,8 @@ export class ArticleController {
       efobasen.code = codes[r];
     }
 
-    return await this.articleService.create(efobasen, projectId);
+    return await this.articleService.create(efobasen, projectId);*/
+    return [];
   }
 
 }

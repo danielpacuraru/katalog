@@ -1,42 +1,45 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { Efobasen, EfobasenSchema } from './schemas/efobasen.schema';
+import { Item, ItemSchema } from './schemas/item.schema';
 import { Project, ProjectSchema } from './schemas/project.schema';
 import { Article, ArticleSchema } from './schemas/article.schema';
 
+import { ItemRepository } from './repositories/item.repository';
 import { ProjectRepository } from './repositories/project.repository';
+import { ArticleRepository } from './repositories/article.repository';
 
-import { EfobasenService } from './services/efobasen.service';
-import { KatalogService } from './services/katalog.service';
+import { ItemService } from './services/item.service';
 import { ProjectService } from './services/project.service';
 import { ArticleService } from './services/article.service';
+import { CatalogService } from './services/catalog.service';
 
-import { EfobasenController } from './controllers/efobasen.controller';
 import { ProjectController } from './controllers/project.controller';
 import { ArticleController } from './controllers/article.controller';
-import { KatalogController } from './controllers/katalog.controller';
+import { CatalogController } from './controllers/catalog.controller';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: Efobasen.name, schema: EfobasenSchema },
+      { name: Item.name, schema: ItemSchema },
       { name: Project.name, schema: ProjectSchema },
       { name: Article.name, schema: ArticleSchema }
     ])
   ],
   providers: [
+    ItemRepository,
     ProjectRepository,
-    EfobasenService,
-    KatalogService,
+    ArticleRepository,
+
+    ItemService,
     ProjectService,
-    ArticleService
+    ArticleService,
+    CatalogService
   ],
   controllers: [
-    EfobasenController,
     ProjectController,
     ArticleController,
-    KatalogController
+    CatalogController
   ]
 })
 export class KatalogModule { }

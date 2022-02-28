@@ -1,5 +1,7 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, SchemaTypes } from 'mongoose';
+
+import { Project } from '../schemas/project.schema';
 
 export type ArticleDocument = Article & Document;
 
@@ -24,8 +26,8 @@ export class Article {
   @Prop()
   doc: string;
 
-  @Prop()
-  projectId: string;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Project' })
+  projectId: Article;
 
 }
 

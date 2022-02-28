@@ -4,18 +4,18 @@ import { Response } from 'express';
 
 import { ProjectService } from '../services/project.service';
 import { ArticleService } from '../services/article.service';
-import { KatalogService } from '../services/katalog.service';
+import { CatalogService } from '../services/catalog.service';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { UserID } from '../../auth/decorators/user-id.decorator';
 import { ProjectStatus } from '../entities/project-status.enum';
 
 @Controller('projects/:id/katalog')
-export class KatalogController {
+export class CatalogController {
 
   constructor(
     private projectService: ProjectService,
     private articleService: ArticleService,
-    private katalogService: KatalogService
+    private catalogService: CatalogService
   ) { }
 
   @UseGuards(JwtAuthGuard)
@@ -28,7 +28,7 @@ export class KatalogController {
 
     const project = await this.projectService.get(projectId, userId);
     const articles = await this.articleService.getAll(projectId);
-    await this.katalogService.build(project, articles);
+    await this.catalogService.build(project, articles);
 
     this.projectService.setStatus(projectId, ProjectStatus.READY);
   }
@@ -51,7 +51,7 @@ export class KatalogController {
     console.log('articles');
     console.log(articles);
 
-    const buffer: Buffer = await this.katalogService.minimal(res, project, articles);
+    const buffer: Buffer = await this.catalogService.minimal(res, project, articles);
 
     res.set({
       'Content-Type': 'application/pdf',
@@ -71,7 +71,8 @@ export class KatalogController {
     @UserID() userId: string,
     @Param('id') projectId: string
   ) {
-    await this.articleService.do();
+    //await this.articleService.do();
+    return [];
   }
 
 }

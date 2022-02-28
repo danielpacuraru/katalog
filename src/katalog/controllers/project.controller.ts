@@ -1,8 +1,8 @@
 import { Controller, UseGuards, Get, Post, Param, Body, NotFoundException } from '@nestjs/common';
 
-import { ProjectService } from '../services/project.service';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { UserID } from '../../auth/decorators/user-id.decorator';
+import { ProjectService } from '../services/project.service';
 import { CreateProjectDto } from '../entities/create-project.dto';
 
 @Controller('projects')

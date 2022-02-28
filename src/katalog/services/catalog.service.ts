@@ -9,7 +9,7 @@ import { Project } from '../schemas/project.schema';
 import { Article } from '../schemas/article.schema';
 
 @Injectable()
-export class KatalogService {
+export class CatalogService {
 
   async minimal(res: Response, project: Project, articles: Article[]): Promise<Buffer> {
     const browser = await puppeteer.launch();
