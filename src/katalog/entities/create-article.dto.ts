@@ -4,6 +4,6 @@ export class CreateArticleDto {
 
   @IsNotEmpty()
   @IsString()
-  tag: string;
+  code: string;
 
 }

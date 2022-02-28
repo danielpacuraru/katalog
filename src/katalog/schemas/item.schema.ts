@@ -5,7 +5,12 @@ import { ItemSource } from '../entities/item-source.enum';
 
 export type ItemDocument = Item & Document;
 
-@Schema({ versionKey: false })
+@Schema({
+  versionKey: false,
+  toJSON: {
+    transform: (doc, ret) => { return ret; }
+  }
+})
 export class Item {
 
   @Prop()

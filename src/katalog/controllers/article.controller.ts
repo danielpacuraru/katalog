@@ -39,7 +39,15 @@ export class ArticleController {
     }
 
     return await this.articleService.create(efobasen, projectId);*/
-    return [];
+    //return await this.articleService.create();
+
+    const article = await this.articleService.create(data.code, projectId);
+
+    if(!article) {
+      throw new NotFoundException();
+    }
+
+    return article;
   }
 
 }
