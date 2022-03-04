@@ -19,8 +19,12 @@ export class ArticleService {
 
   async create(code: string, projectId: string) {
     const item: Item = await this.itemService.getByCode(code);
-    console.log(item);
-    return [];
+
+    if(!item) {
+      return;
+    }
+
+    return await this.articleRepository.create({ code,group: item.group, name: item.name, maker: item.maker, thumbnail: item.thumbnail, doc: item.doc }, projectId);
   }
 
 }

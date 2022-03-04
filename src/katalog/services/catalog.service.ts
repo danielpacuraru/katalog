@@ -58,8 +58,8 @@ export class CatalogService {
 
     // create project docs
     for(const article of articles) {
-      const docPath = join(__dirname, '..', '..', 'pdf', `${article.tag}.pdf`);
-      const projectDocPath = join(projectPath, article.code, `${article.code}_${article.tag}.pdf`);
+      const docPath = join(__dirname, '..', '..', 'pdf', `${article.code}.pdf`);
+      const projectDocPath = join(projectPath, article.code, `${article.code}_${article.code}.pdf`);
       await copyFile(docPath, projectDocPath);
     }
 

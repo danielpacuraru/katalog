@@ -26,21 +26,6 @@ export class ArticleController {
     @Param('id') projectId: string,
     @Body() data: CreateArticleDto
   ) {
-    /*const efobasen = await this.efobasenService.getByTag(data.tag);
-
-    if(!efobasen) {
-      throw new NotFoundException();
-    }
-
-    if(!efobasen.code) {
-      const codes = ['411', '422', '420', '430', '432'];
-      const r = Math.floor(Math.random() * 5);
-      efobasen.code = codes[r];
-    }
-
-    return await this.articleService.create(efobasen, projectId);*/
-    //return await this.articleService.create();
-
     const article = await this.articleService.create(data.code, projectId);
 
     if(!article) {

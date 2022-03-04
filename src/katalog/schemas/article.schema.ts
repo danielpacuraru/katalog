@@ -9,10 +9,10 @@ export type ArticleDocument = Article & Document;
 export class Article {
 
   @Prop()
-  tag: string;
+  code: string;
 
   @Prop()
-  code: string;
+  group: string;
 
   @Prop()
   name: string;
