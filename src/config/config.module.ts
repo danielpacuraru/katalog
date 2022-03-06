@@ -9,7 +9,9 @@ import * as Joi from 'joi';
       validationSchema: Joi.object({
         PORT: Joi.number(),
         MODE: Joi.string(),
-        PATH_DOCS: Joi.string(),
+        PATH_DOCUMENTS: Joi.string(),
+        PATH_PROJECTS: Joi.string(),
+        PATH_ARCHIVES: Joi.string(),
         JWT_SECRET: Joi.string(),
         MONGO_URL: Joi.string()
       }),

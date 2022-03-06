@@ -5,7 +5,12 @@ import { Project } from '../schemas/project.schema';
 
 export type ArticleDocument = Article & Document;
 
-@Schema({ versionKey: false })
+@Schema({
+  versionKey: false,
+  toJSON: {
+    transform: (doc, ret) => { ret.id = ret._id.toString(); delete ret._id; delete ret.projectId; return ret; }
+  }
+})
 export class Article {
 
   @Prop()

@@ -10,20 +10,19 @@ import { Item } from '../schemas/item.schema';
 @Injectable()
 export class ItemService {
 
-  private pathDocs: string;
+  private pathDocuments: string;
 
   constructor(
     private config: ConfigService,
     private itemRepository: ItemRepository
   ) {
-    this.pathDocs = config.get('PATH_DOCS');
+    this.pathDocuments = config.get('PATH_DOCUMENTS');
   }
 
   async getByCode(code: string): Promise<Item> {
     const item: Item = await this.itemRepository.getByCode(code);
 
     if(item) {
-      console.log('found in database');
       return item;
     }
 
@@ -46,7 +45,7 @@ export class ItemService {
     }
 
     try {
-      await this.downloadDoc(item.doc, join(this.pathDocs, `${code}.pdf`));
+      await this.downloadDoc(item.doc, join(this.pathDocuments, `${code}.pdf`));
     }
     catch(e) {
       return;

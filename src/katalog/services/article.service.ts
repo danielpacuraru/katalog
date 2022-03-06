@@ -17,6 +17,10 @@ export class ArticleService {
     return await this.articleRepository.getAll(projectId);
   }
 
+  async getByCode(code: string, projectId: string): Promise<Article> {
+    return await this.articleRepository.getByCode(code, projectId);
+  }
+
   async create(code: string, projectId: string) {
     const item: Item = await this.itemService.getByCode(code);
 
@@ -24,7 +28,7 @@ export class ArticleService {
       return;
     }
 
-    return await this.articleRepository.create({ code,group: item.group, name: item.name, maker: item.maker, thumbnail: item.thumbnail, doc: item.doc }, projectId);
+    return await this.articleRepository.create({ code, group: item.group, name: item.name, maker: item.maker, thumbnail: item.thumbnail, doc: item.doc }, projectId);
   }
 
 }

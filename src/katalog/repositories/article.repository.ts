@@ -17,6 +17,16 @@ export class ArticleRepository {
     return articles.map(a => a.toJSON());
   }
 
+  async getByCode(code: string, projectId: string): Promise<Article> {
+    const article: ArticleDocument = await this.articleModel.findOne({ code, projectId }).exec();
+
+    if(!article) {
+      return;
+    }
+
+    return article.toJSON();
+  }
+
   async create(data, projectId: string): Promise<Article> {
     const article: ArticleDocument = new this.articleModel({ ...data, projectId: new Types.ObjectId(projectId) });
     await article.save();

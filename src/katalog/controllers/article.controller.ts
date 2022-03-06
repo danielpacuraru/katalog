@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Get, Post, Param, Body, NotFoundException } from '@nestjs/common';
+import { Controller, UseGuards, Get, Post, Param, Body, NotFoundException, ConflictException } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { UserID } from '../../auth/decorators/user-id.decorator';
@@ -26,6 +26,12 @@ export class ArticleController {
     @Param('id') projectId: string,
     @Body() data: CreateArticleDto
   ) {
+    const exists = await this.articleService.getByCode(data.code, projectId);
+
+    if(exists) {
+      throw new ConflictException();
+    }
+
     const article = await this.articleService.create(data.code, projectId);
 
     if(!article) {
