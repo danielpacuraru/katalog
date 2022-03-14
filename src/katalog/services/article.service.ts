@@ -21,7 +21,7 @@ export class ArticleService {
     return await this.articleRepository.getByCode(code, projectId);
   }
 
-  async create(code: string, projectId: string) {
+  async create(code: string, projectId: string): Promise<Article> {
     const item: Item = await this.itemService.getByCode(code);
 
     if(!item) {
@@ -29,6 +29,10 @@ export class ArticleService {
     }
 
     return await this.articleRepository.create({ code, group: item.group, name: item.name, maker: item.maker, thumbnail: item.thumbnail, doc: item.doc }, projectId);
+  }
+
+  async update(group: string, articleId: string, projectId: string): Promise<Article> {
+    return await this.articleRepository.update(group, articleId, projectId);
   }
 
 }

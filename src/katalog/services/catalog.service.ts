@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import * as puppeteer from 'puppeteer';
 import { join } from 'path';
@@ -10,6 +11,55 @@ import { Article } from '../schemas/article.schema';
 
 @Injectable()
 export class CatalogService {
+
+  private projectsPath: string;
+  private archivesPath: string;
+  private documentsPath: string;
+
+  constructor(
+    private config: ConfigService
+  ) {
+    this.projectsPath = config.get('PATH_PROJECTS');
+    this.archivesPath = config.get('PATH_ARCHIVES');
+    this.documentsPath = config.get('PATH_DOCUMENTS');
+  }
+
+  async build(project: Project, articles: Article[]): Promise<boolean> {
+    const id: string = project['id'];
+    const name: string = project.name;
+    const groups: string[] = articles.map(a => a.group).filter((v, i, a) => { return a.indexOf(v) === i });
+    const projectPath = join(this.projectsPath, id);
+    const archivePath = join(this.archivesPath, `${id}.zip`);
+
+    // remove project folder and zip file if they exist
+    await rm(projectPath, { recursive: true, force: true });
+    await rm(archivePath, { recursive: true, force: true });
+
+    // create project folder
+    await mkdir(projectPath);
+    const projectNamePath = join(projectPath, name);
+    await mkdir(projectNamePath);
+
+    // create project subfolders
+    for(const group of groups) {
+      const projectGroupPath = join(projectPath, name, group);
+      await mkdir(projectGroupPath);
+    }
+
+    // create project docs
+    for(const article of articles) {
+      const documentSrcPath = join(this.documentsPath, `${article.code}.pdf`);
+      const documentDestPath = join(projectPath, name, article.group, `${article.group}_${article.code}_${article.maker}.pdf`);
+      await copyFile(documentSrcPath, documentDestPath);
+    }
+
+    // create project zip file
+    await zip(projectNamePath, archivePath);
+
+    // remove project folder
+    await rm(projectPath, { recursive: true, force: true });
+    return true;
+  }
 
   async minimal(res: Response, project: Project, articles: Article[]): Promise<Buffer> {
     const browser = await puppeteer.launch();
@@ -33,43 +83,6 @@ export class CatalogService {
         return resolve(html);
       })
     });
-  }
-
-  async build(project: Project, articles: Article[]): Promise<boolean> {
-    const id: string = project['_id'];
-    const name: string = project.name;
-    const codes: string[] = articles.map(a => a.code).filter((v, i, a) => { return a.indexOf(v) === i });
-
-    const projectPath = join(__dirname, '..', '..', 'projects', name);
-    const projectZipPath = join(__dirname, '..', '..', 'projects', `${id}.zip`);
-
-    // remove project folder and zip file if they exist
-    await rm(projectPath, { recursive: true, force: true });
-    await rm(projectZipPath, { recursive: true, force: true });
-
-    // create project folder
-    await mkdir(projectPath);
-
-    // create project subfolders
-    for(const code of codes) {
-      const projectCodePath = join(projectPath, code);
-      await mkdir(projectCodePath);
-    }
-
-    // create project docs
-    for(const article of articles) {
-      const docPath = join(__dirname, '..', '..', 'pdf', `${article.code}.pdf`);
-      const projectDocPath = join(projectPath, article.code, `${article.code}_${article.code}.pdf`);
-      await copyFile(docPath, projectDocPath);
-    }
-
-    // create project zip file
-    await zip(projectPath, projectZipPath);
-
-    // remove project folder
-    await rm(projectPath, { recursive: true, force: true });
-
-    return true;
   }
 
 }

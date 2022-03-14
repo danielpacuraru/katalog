@@ -1,9 +1,10 @@
-import { Controller, UseGuards, Get, Post, Param, Body, NotFoundException, ConflictException } from '@nestjs/common';
+import { Controller, UseGuards, Get, Post, Put, Param, Body, NotFoundException, ConflictException } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { UserID } from '../../auth/decorators/user-id.decorator';
 import { ArticleService } from '../services/article.service';
 import { CreateArticleDto } from '../entities/create-article.dto';
+import { UpdateArticleDto } from '../entities/update-article.dto';
 
 @Controller('projects/:id/articles')
 export class ArticleController {
@@ -39,6 +40,20 @@ export class ArticleController {
     }
 
     return article;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put(':aid')
+  async update(
+    @Param('id') projectId: string,
+    @Param('aid') articleId: string,
+    @Body() data: UpdateArticleDto
+  ) {
+    console.log(projectId);
+    console.log(articleId);
+    console.log(data);
+
+    return await this.articleService.update(data.group, articleId, projectId);
   }
 
 }

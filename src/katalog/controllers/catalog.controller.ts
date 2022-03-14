@@ -9,7 +9,7 @@ import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { UserID } from '../../auth/decorators/user-id.decorator';
 import { ProjectStatus } from '../entities/project-status.enum';
 
-@Controller('projects/:id/katalog')
+@Controller('projects/:id/catalog')
 export class CatalogController {
 
   constructor(
@@ -24,13 +24,13 @@ export class CatalogController {
     @UserID() userId: string,
     @Param('id') projectId: string
   ) {
-    this.projectService.setStatus(projectId, ProjectStatus.QUEUE);
+    await this.projectService.setStatus(projectId, ProjectStatus.QUEUE);
 
     const project = await this.projectService.get(projectId, userId);
     const articles = await this.articleService.getAll(projectId);
     await this.catalogService.build(project, articles);
 
-    this.projectService.setStatus(projectId, ProjectStatus.READY);
+    await this.projectService.setStatus(projectId, ProjectStatus.READY);
   }
 
   @UseGuards(JwtAuthGuard)

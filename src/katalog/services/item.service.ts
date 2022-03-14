@@ -10,13 +10,13 @@ import { Item } from '../schemas/item.schema';
 @Injectable()
 export class ItemService {
 
-  private pathDocuments: string;
+  private documentsPath: string;
 
   constructor(
     private config: ConfigService,
     private itemRepository: ItemRepository
   ) {
-    this.pathDocuments = config.get('PATH_DOCUMENTS');
+    this.documentsPath = config.get('PATH_DOCUMENTS');
   }
 
   async getByCode(code: string): Promise<Item> {
@@ -45,7 +45,7 @@ export class ItemService {
     }
 
     try {
-      await this.downloadDoc(item.doc, join(this.pathDocuments, `${code}.pdf`));
+      await this.downloadDoc(item.doc, join(this.documentsPath, `${code}.pdf`));
     }
     catch(e) {
       return;
@@ -59,8 +59,8 @@ export class ItemService {
 
     try {
       obj.code = data['Produktinfo']['Produktnr'].toString();
-      obj.name = data['Produktinfo']['Varetekst'];
-      obj.maker = data['Produktinfo']['Fabrikat'];
+      obj.name = data['Produktinfo']['Varetekst'].trim().replace('/', '-');
+      obj.maker = data['Produktinfo']['Fabrikat'].trim().replace('/', '-');
 
       const imgId = data['Produktinfo']['Bilder'].length ? data['Produktinfo']['Bilder'][0] : null;
       if(imgId) obj.thumbnail = `https://efobasen.efo.no/API/Produktfiler/Skalert?id=${imgId}&w=350&h=350&m=3`;
