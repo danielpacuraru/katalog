@@ -7,17 +7,12 @@ export type ItemDocument = Item & Document;
 
 @Schema({
   versionKey: false,
-  toJSON: {
-    transform: (doc, ret) => { return ret; }
-  }
+  timestamps: true
 })
 export class Item {
 
   @Prop()
   code: string;
-
-  @Prop()
-  group: string;
 
   @Prop()
   name: string;
@@ -26,10 +21,13 @@ export class Item {
   maker: string;
 
   @Prop()
-  thumbnail: string;
+  thumbnail?: string;
 
   @Prop()
   doc: string;
+
+  @Prop()
+  group?: string;
 
   @Prop()
   source: ItemSource;

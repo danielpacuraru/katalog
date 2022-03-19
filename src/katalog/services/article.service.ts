@@ -28,7 +28,7 @@ export class ArticleService {
       return;
     }
 
-    return await this.articleRepository.create({ code, group: item.group, name: item.name, maker: item.maker, thumbnail: item.thumbnail, doc: item.doc }, projectId);
+    return await this.articleRepository.create({ code, name: item.name, maker: item.maker, thumbnail: item.thumbnail, doc: item.doc, group: item.group }, projectId);
   }
 
   async update(group: string, articleId: string, projectId: string): Promise<Article> {

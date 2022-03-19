@@ -22,6 +22,12 @@ export class ItemRepository {
   }
 
   async create(data: Item): Promise<Item> {
+    const hasGroup: boolean = Math.random() > 0.5;
+    const groups: string[] = ['411', '422', '430', '432', '440', '510', '612', '640'];
+    const group: string = groups[Math.floor(Math.random() * 8)];
+
+    if(hasGroup) data.group = group;
+
     const item: ItemDocument = new this.itemModel(data);
     await item.save();
 

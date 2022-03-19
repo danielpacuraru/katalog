@@ -3,6 +3,7 @@ import { Controller, UseGuards, Get, Post, Param, Body, NotFoundException } from
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { UserID } from '../../auth/decorators/user-id.decorator';
 import { ProjectService } from '../services/project.service';
+import { Project } from '../schemas/project.schema';
 import { CreateProjectDto } from '../entities/create-project.dto';
 
 @Controller('projects')
@@ -16,17 +17,16 @@ export class ProjectController {
   @Get()
   async getAll(
     @UserID() userId: string
-  ) {
-    const projects = await this.projectService.getAll(userId);
-    return projects;
+  ): Promise<Project[]> {
+    return await this.projectService.getAll(userId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   async get(
-    @Param('id') id: string,
-    @UserID() userId: string
-  ) {
+    @UserID() userId: string,
+    @Param('id') id: string
+  ): Promise<Project> {
     const project = await this.projectService.get(id, userId);
 
     if(!project) {
@@ -39,11 +39,10 @@ export class ProjectController {
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(
-    @Body() data: CreateProjectDto,
-    @UserID() userId: string
-  ) {
-    const project = await this.projectService.create(data, userId);
-    return project;
+    @UserID() userId: string,
+    @Body() data: CreateProjectDto
+  ): Promise<Project> {
+    return await this.projectService.create(data, userId);
   }
 
 }

@@ -28,9 +28,7 @@ export class ArticleRepository {
   }
 
   async create(data, projectId: string): Promise<Article> {
-    const groups: string[] = ['411', '422', '430', '432', '440', '510'];
-    const group: string = groups[Math.floor(Math.random() * 6)];
-    const article: ArticleDocument = new this.articleModel({ ...data, group, projectId: new Types.ObjectId(projectId) });
+    const article: ArticleDocument = new this.articleModel({ ...data, projectId: new Types.ObjectId(projectId) });
     await article.save();
 
     return article.toJSON();

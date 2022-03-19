@@ -6,6 +6,7 @@ import { createWriteStream } from 'fs';
 
 import { ItemRepository } from '../repositories/item.repository';
 import { Item } from '../schemas/item.schema';
+import { ItemSource } from '../entities/item-source.enum';
 
 @Injectable()
 export class ItemService {
@@ -69,6 +70,7 @@ export class ItemService {
       const pdfObj2 = pdfObj1['Felter'].find(x => x['Navn'] === 'fdv');
       const pdfId = pdfObj2['Verdi']['FilId'];
       obj.doc = `https://efobasen.efo.no/API/Produktfiler/LastNed?id=${pdfId}`;
+      obj.source = ItemSource.EFOBASEN;
     }
     catch(e) {
       return;

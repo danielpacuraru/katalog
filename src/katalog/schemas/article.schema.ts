@@ -17,19 +17,19 @@ export class Article {
   code: string;
 
   @Prop()
-  group: string;
-
-  @Prop()
   name: string;
 
   @Prop()
   maker: string;
 
   @Prop()
-  thumbnail: string;
+  thumbnail?: string;
 
   @Prop()
   doc: string;
+
+  @Prop()
+  group?: string;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Project' })
   projectId: Article;
