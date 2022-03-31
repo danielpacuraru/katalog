@@ -18,6 +18,10 @@ export class ProjectService {
     return await this.projectRepository.get(id, userId);
   }
 
+  async get2(id: string): Promise<Project> {
+    return await this.projectRepository.get2(id);
+  }
+
   async create(data: CreateProjectDto, userId: string): Promise<Project> {
     return await this.projectRepository.create(data, userId);
   }

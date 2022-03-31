@@ -6,6 +6,8 @@ import { join } from 'path';
 import { mkdir, copyFile, rm } from 'fs/promises';
 import { zip } from 'zip-a-folder';
 
+import { ProjectService } from '../services/project.service';
+import { ArticleService } from '../services/article.service';
 import { Project } from '../schemas/project.schema';
 import { Article } from '../schemas/article.schema';
 
@@ -17,20 +19,26 @@ export class CatalogService {
   private documentsPath: string;
 
   constructor(
-    private config: ConfigService
+    private config: ConfigService,
+    private projectService: ProjectService,
+    private articleService: ArticleService
   ) {
     this.projectsPath = config.get('PATH_PROJECTS');
     this.archivesPath = config.get('PATH_ARCHIVES');
     this.documentsPath = config.get('PATH_DOCUMENTS');
   }
 
-  async build(project: Project, articles: Article[]): Promise<boolean> {
-    const id: string = project['id'];
+  async build(id: string): Promise<boolean> {
+    const project: Project = await this.projectService.get2(id);
+    const articles2: Article[] = await this.articleService.getAll(id);
+    const articles: Article[] = articles2.filter(a => a.group !== undefined);
     const name: string = project.name;
     const groups: string[] = articles.map(a => a.group).filter((v, i, a) => { return a.indexOf(v) === i });
+    console.log(groups);
     const projectPath = join(this.projectsPath, id);
     const archivePath = join(this.archivesPath, `${id}.zip`);
 
+    try {
     // remove project folder and zip file if they exist
     await rm(projectPath, { recursive: true, force: true });
     await rm(archivePath, { recursive: true, force: true });
@@ -58,6 +66,10 @@ export class CatalogService {
 
     // remove project folder
     await rm(projectPath, { recursive: true, force: true });
+  } catch(e) {
+    console.log(e);
+  }
+
     return true;
   }
 

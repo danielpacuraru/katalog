@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Get, Post, Param, Res } from '@nestjs/common';
+import { Controller, UseGuards, Get, Post, Param, Res, UnprocessableEntityException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 
@@ -22,57 +22,27 @@ export class CatalogController {
   @Post()
   async build(
     @UserID() userId: string,
-    @Param('id') projectId: string
+    @Param('id') id: string
   ) {
-    await this.projectService.setStatus(projectId, ProjectStatus.QUEUE);
+    const articles = await this.articleService.getAll(id);
+    const incompleteArticles = articles.filter(a => a.group === undefined);
 
-    const project = await this.projectService.get(projectId, userId);
-    const articles = await this.articleService.getAll(projectId);
-    await this.catalogService.build(project, articles);
+    if(incompleteArticles.length > 0) {
+      throw new UnprocessableEntityException();
+    }
 
-    await this.projectService.setStatus(projectId, ProjectStatus.READY);
+    await this.catalogService.build(id);
+
+    return;
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('minimal')
-  async minimal(
+  @Get()
+  async download(
     @UserID() userId: string,
-    @Param('id') projectId: string,
-    @Res() res: Response
+    @Param('id') id: string
   ) {
-    /*const tpl = await this.katalog.render(res);
-    console.log(tpl);*/
-
-    const project = await this.projectService.get(projectId, userId);
-    const articles = await this.articleService.getAll(projectId);
-
-    console.log('project');
-    console.log(project);
-    console.log('articles');
-    console.log(articles);
-
-    const buffer: Buffer = await this.catalogService.minimal(res, project, articles);
-
-    res.set({
-      'Content-Type': 'application/pdf',
-      'Content-Disposition': 'attachment; filename=invoice.pdf',
-      'Content-Length': buffer.length,
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': 0
-    });
-
-    res.end(buffer);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Post('fix')
-  async fix(
-    @UserID() userId: string,
-    @Param('id') projectId: string
-  ) {
-    //await this.articleService.do();
-    return [];
+    return { ok: true };
   }
 
 }

@@ -29,6 +29,12 @@ export class ProjectRepository {
     return project.toJSON();
   }
 
+  async get2(id: string): Promise<Project> {
+    const project: ProjectDocument = await this.projectModel.findById(id).exec();
+
+    return project.toJSON();
+  }
+
   async create(data: CreateProjectDto, userId: string): Promise<Project> {
     const project: ProjectDocument = new this.projectModel({ ...data, userId: new Types.ObjectId(userId) });
     await project.save();

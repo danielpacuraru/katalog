@@ -6,7 +6,6 @@ import { Article } from '../schemas/article.schema';
 import { CreateArticleDto } from '../entities/create-article.dto';
 import { UpdateArticleDto } from '../entities/update-article.dto';
 
-
 @Controller('projects/:projectId/articles')
 export class ArticleController {
 
