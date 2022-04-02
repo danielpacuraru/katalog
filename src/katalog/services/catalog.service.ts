@@ -5,11 +5,13 @@ import * as puppeteer from 'puppeteer';
 import { join } from 'path';
 import { mkdir, copyFile, rm } from 'fs/promises';
 import { zip } from 'zip-a-folder';
+import { createReadStream, ReadStream } from 'fs';
 
 import { ProjectService } from '../services/project.service';
 import { ArticleService } from '../services/article.service';
 import { Project } from '../schemas/project.schema';
 import { Article } from '../schemas/article.schema';
+import { ProjectStatus } from '../entities/project-status.enum';
 
 @Injectable()
 export class CatalogService {
@@ -28,49 +30,47 @@ export class CatalogService {
     this.documentsPath = config.get('PATH_DOCUMENTS');
   }
 
-  async build(id: string): Promise<boolean> {
+  public async build(id: string): Promise<void> {
     const project: Project = await this.projectService.get2(id);
-    const articles2: Article[] = await this.articleService.getAll(id);
-    const articles: Article[] = articles2.filter(a => a.group !== undefined);
+    const articles: Article[] = await this.articleService.getAll(id);
     const name: string = project.name;
     const groups: string[] = articles.map(a => a.group).filter((v, i, a) => { return a.indexOf(v) === i });
-    console.log(groups);
     const projectPath = join(this.projectsPath, id);
     const archivePath = join(this.archivesPath, `${id}.zip`);
 
     try {
-    // remove project folder and zip file if they exist
-    await rm(projectPath, { recursive: true, force: true });
-    await rm(archivePath, { recursive: true, force: true });
+      await rm(projectPath, { recursive: true, force: true });
+      await rm(archivePath, { recursive: true, force: true });
 
-    // create project folder
-    await mkdir(projectPath);
-    const projectNamePath = join(projectPath, name);
-    await mkdir(projectNamePath);
+      await mkdir(projectPath);
 
-    // create project subfolders
-    for(const group of groups) {
-      const projectGroupPath = join(projectPath, name, group);
-      await mkdir(projectGroupPath);
+      for(const group of groups) {
+        const projectGroupPath = join(projectPath, group);
+        await mkdir(projectGroupPath);
+      }
+
+      for(const article of articles) {
+        const documentSrcPath = join(this.documentsPath, `${article.code}.pdf`);
+        const documentDestPath = join(projectPath, article.group, `${article.group}_${article.code}_${article.maker}.pdf`);
+        await copyFile(documentSrcPath, documentDestPath);
+      }
+
+      await zip(projectPath, archivePath);
+
+      await rm(projectPath, { recursive: true, force: true });
+    } catch(e) {
+      await this.projectService.setStatus(id, ProjectStatus.ERROR);
+      console.log('Error building project', id);
+      return;
     }
 
-    // create project docs
-    for(const article of articles) {
-      const documentSrcPath = join(this.documentsPath, `${article.code}.pdf`);
-      const documentDestPath = join(projectPath, name, article.group, `${article.group}_${article.code}_${article.maker}.pdf`);
-      await copyFile(documentSrcPath, documentDestPath);
-    }
-
-    // create project zip file
-    await zip(projectNamePath, archivePath);
-
-    // remove project folder
-    await rm(projectPath, { recursive: true, force: true });
-  } catch(e) {
-    console.log(e);
+    await this.projectService.setStatus(id, ProjectStatus.READY);
+    return;
   }
 
-    return true;
+  public download(id: string): ReadStream {
+    const filepath = join(this.archivesPath, id + '.zip');
+    return createReadStream(filepath);
   }
 
   async minimal(res: Response, project: Project, articles: Article[]): Promise<Buffer> {

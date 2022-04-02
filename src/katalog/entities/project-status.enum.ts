@@ -1,5 +1,7 @@
 export enum ProjectStatus {
   EMPTY = 'EMPTY',
   QUEUE = 'QUEUE',
-  READY = 'READY'
+  WORKS = 'WORKS',
+  READY = 'READY',
+  ERROR = 'ERROR'
 }

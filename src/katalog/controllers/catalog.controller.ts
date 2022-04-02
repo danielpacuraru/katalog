@@ -1,6 +1,8 @@
-import { Controller, UseGuards, Get, Post, Param, Res, UnprocessableEntityException } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Controller, UseGuards, Get, Post, Param, Res, StreamableFile, UnprocessableEntityException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
+import { ReadStream } from 'fs';
+import { join } from 'path';
 
 import { ProjectService } from '../services/project.service';
 import { ArticleService } from '../services/article.service';
@@ -13,6 +15,7 @@ import { ProjectStatus } from '../entities/project-status.enum';
 export class CatalogController {
 
   constructor(
+    private config: ConfigService,
     private projectService: ProjectService,
     private articleService: ArticleService,
     private catalogService: CatalogService
@@ -31,18 +34,27 @@ export class CatalogController {
       throw new UnprocessableEntityException();
     }
 
-    await this.catalogService.build(id);
+    await this.projectService.setStatus(id, ProjectStatus.QUEUE);
+
+    this.catalogService.build(id);
 
     return;
   }
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  async download(
-    @UserID() userId: string,
-    @Param('id') id: string
-  ) {
-    return { ok: true };
+  download(
+    @Param('id') id: string,
+    @Res({ passthrough: true }) res
+  ): StreamableFile {
+    const stream: ReadStream = this.catalogService.download(id);
+
+    res.set({
+      'Content-Type': 'application/zip',
+      'Content-Disposition': 'attachment; filename="effex.zip"',
+    });
+
+    return new StreamableFile(stream);
   }
 
 }
