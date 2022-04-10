@@ -60,7 +60,9 @@ export class CatalogService {
       await rm(projectPath, { recursive: true, force: true });
     } catch(e) {
       await this.projectService.setStatus(id, ProjectStatus.ERROR);
+
       console.log('Error building project', id);
+
       return;
     }
 
@@ -69,7 +71,7 @@ export class CatalogService {
   }
 
   public download(id: string): ReadStream {
-    const filepath = join(this.archivesPath, id + '.zip');
+    const filepath = join(this.archivesPath, `${id}.zip`);
     return createReadStream(filepath);
   }
 

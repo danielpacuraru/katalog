@@ -35,7 +35,6 @@ export class ArticleRepository {
   }
 
   async update(group: string, articleId: string, projectId: string): Promise<Article> {
-    console.log(articleId);
     const article: ArticleDocument = await this.articleModel.findByIdAndUpdate(articleId, { group }).exec();
 
     return article.toJSON();
