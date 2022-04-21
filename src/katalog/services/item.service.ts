@@ -5,7 +5,7 @@ import fetch from 'node-fetch';
 import { createWriteStream } from 'fs';
 
 import { ItemRepository } from '../repositories/item.repository';
-import { Item } from '../schemas/item.schema';
+import { Item, ItemBatch } from '../schemas/item.schema';
 import { ItemSource } from '../entities/item-source.enum';
 
 @Injectable()
@@ -18,6 +18,12 @@ export class ItemService {
     private itemRepository: ItemRepository
   ) {
     this.documentsPath = config.get('PATH_DOCUMENTS');
+  }
+
+  async getAll(limit: number, skip: number): Promise<ItemBatch> {
+    const limit2 = limit ? limit : 10;
+    const skip2 = skip ? skip : 0;
+    return await this.itemRepository.getAll(limit2, skip2);
   }
 
   async getByCode(code: string): Promise<Item> {

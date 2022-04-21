@@ -7,7 +7,10 @@ export type ItemDocument = Item & Document;
 
 @Schema({
   versionKey: false,
-  timestamps: true
+  timestamps: true,
+  toJSON: {
+    transform: (doc, ret) => { ret.id = ret._id.toString(); delete ret._id; delete ret.createdAt; delete ret.updatedAt; return ret; }
+  }
 })
 export class Item {
 
@@ -35,3 +38,8 @@ export class Item {
 }
 
 export const ItemSchema = SchemaFactory.createForClass(Item);
+
+export interface ItemBatch {
+  items: Item[],
+  count: number
+}

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { Item, ItemDocument } from '../schemas/item.schema';
+import { Item, ItemBatch, ItemDocument } from '../schemas/item.schema';
 
 @Injectable()
 export class ItemRepository {
@@ -10,6 +10,16 @@ export class ItemRepository {
   constructor(
     @InjectModel(Item.name) private itemModel: Model<ItemDocument>
   ) { }
+
+  async getAll(limit: number, skip: number): Promise<ItemBatch> {console.log('limit', limit, 'skip', skip);
+    const items: ItemDocument[] = await this.itemModel.find({ group: '422' }).limit(limit).skip(skip).exec();
+    const count: number = await this.itemModel.find({ group: '422' }).count();
+
+    return {
+      items: items.map(i => i.toJSON()),
+      count: count
+    }
+  }
 
   async getByCode(code: string): Promise<Item> {
     const item: ItemDocument = await this.itemModel.findOne({ code }).exec();

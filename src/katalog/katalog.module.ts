@@ -10,10 +10,13 @@ import { ProjectRepository } from './repositories/project.repository';
 import { ArticleRepository } from './repositories/article.repository';
 
 import { ItemService } from './services/item.service';
+import { ProductService } from './services/product.service';
 import { ProjectService } from './services/project.service';
 import { ArticleService } from './services/article.service';
 import { CatalogService } from './services/catalog.service';
 
+import { ItemController } from './controllers/item.controller';
+import { ProductController } from './controllers/product.controller';
 import { ProjectController } from './controllers/project.controller';
 import { ArticleController } from './controllers/article.controller';
 import { CatalogController } from './controllers/catalog.controller';
@@ -32,11 +35,14 @@ import { CatalogController } from './controllers/catalog.controller';
     ArticleRepository,
 
     ItemService,
+    ProductService,
     ProjectService,
     ArticleService,
     CatalogService
   ],
   controllers: [
+    ItemController,
+    ProductController,
     ProjectController,
     ArticleController,
     CatalogController

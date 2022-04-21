@@ -6,9 +6,9 @@ import { UserService } from '../services/user.service';
 import { User } from '../schemas/user.schema';
 import { SignupDto } from '../dtos/signup.dto';
 
-export interface Payload {
-  sub: string;
-}
+export interface Payload { sub: string; }
+
+export const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
 @Injectable()
 export class AuthService {
@@ -32,6 +32,7 @@ export class AuthService {
     const user: User = await this.userService.findByEmail(email);
 
     if(!user || user.password !== await bcrypt.hash(password, user.salt)) {
+      await sleep(2000);
       throw new UnauthorizedException();
     }
 
