@@ -2,12 +2,10 @@ import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 @Schema({
-  timestamps: true,
-  toJSON: {
-    transform: (doc, ret) => { return ret; }
-  }
+  collection: 'objects',
+  timestamps: true
 })
-export class CProduct {
+export class IObject {
 
   @Prop()
   _id: string;
@@ -19,7 +17,7 @@ export class CProduct {
   maker: string;
 
   @Prop()
-  thumbnail: string;
+  thumbnail?: string;
 
   @Prop()
   document: string;
@@ -28,15 +26,15 @@ export class CProduct {
   category?: string;
 
   @Prop()
-  source: ProductSource;
+  source: ObjectSource;
 
 }
 
-export type Product = CProduct & Document;
+export type Object = IObject & Document;
 
-export const ProductSchema = SchemaFactory.createForClass(CProduct);
+export const ObjectSchema = SchemaFactory.createForClass(IObject);
 
-export enum ProductSource {
+export enum ObjectSource {
   EFOBASEN = 'EFOBASEN',
   MANUAL = 'MANUAL'
 }
