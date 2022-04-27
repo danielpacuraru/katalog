@@ -35,14 +35,15 @@ export class ObjectService {
     }
 
     try {
-      result._id = data['Produktinfo']['Produktnr'].toString();
+      result._id = id;
 
-      result.name = data['Produktinfo']['Varetekst'].trim();
+      result.name = data['Produktinfo']['Varetekst'];
 
-      result.maker = data['Produktinfo']['Fabrikat'].trim();
+      result.maker = data['Produktinfo']['Fabrikat'];
 
-      const imgId = data['Produktinfo']['Bilder'].length ? data['Produktinfo']['Bilder'][0] : null;
-      if(imgId) result.thumbnail = `https://efobasen.efo.no/API/Produktfiler/Skalert?id=${imgId}&w=350&h=350&m=3`;
+      result.thumbnail = `https://efobasen.efo.no/API/Produktfiler/Skalert?id=${data['Produktskjema']['Produktinfo']['Bilde']}&w=350&h=350&m=3`;
+
+      result.class = data['Produktskjema']['Produktinfo']['ETIMKode'];
 
       const pdfObj1 = data['Produktskjema']['Skjema']['Grupper'].find(x => x['Navn'] === 'Dokumenter');
       const pdfObj2 = pdfObj1['Felter'].find(x => x['Navn'] === 'fdv');
