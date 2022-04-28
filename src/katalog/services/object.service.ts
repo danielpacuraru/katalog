@@ -3,11 +3,15 @@ import fetch from 'node-fetch';
 
 import { ObjectRepository } from '../repositories/object.repository';
 import { Object, IObject, ObjectSource } from '../schemas/object.schema';
+import { CategoryRepository } from '../repositories/category.repository';
 
 @Injectable()
 export class ObjectService {
 
-  constructor(private objectRepository: ObjectRepository) { }
+  constructor(
+    private objectRepository: ObjectRepository,
+    private categoryRepository: CategoryRepository
+  ) { }
 
   async getAll(): Promise<Object[]> {
     return await this.objectRepository.getAll();
@@ -55,6 +59,8 @@ export class ObjectService {
     catch(e) {
       return;
     }
+
+    result.category = await this.categoryRepository.get(result.class);
 
     return result;
   }
