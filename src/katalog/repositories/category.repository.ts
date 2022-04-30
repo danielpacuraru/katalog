@@ -22,9 +22,4 @@ export class CategoryRepository {
     return category.category;
   }
 
-  async create(data: CreateCategoryDto): Promise<void> {
-    const newCategory: Category = new this.categoryModel({ _id: data.class, category: data.category });
-    await newCategory.save();
-  }
-
 }

@@ -16,7 +16,7 @@ import { ProjectService } from './services/project.service';
 import { ArticleService } from './services/article.service';
 import { CatalogService } from './services/catalog.service';
 
-import { ObjectController } from './controllers/object.controller';
+import { AdminController } from './controllers/admin.controller';
 import { ProjectController } from './controllers/project.controller';
 import { ArticleController } from './controllers/article.controller';
 import { CatalogController } from './controllers/catalog.controller';
@@ -42,7 +42,7 @@ import { CatalogController } from './controllers/catalog.controller';
     CatalogService
   ],
   controllers: [
-    ObjectController,
+    AdminController,
     ProjectController,
     ArticleController,
     CatalogController

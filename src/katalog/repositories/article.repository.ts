@@ -40,4 +40,8 @@ export class ArticleRepository {
     return article.toJSON();
   }
 
+  async createMany(data) {
+    await this.articleModel.insertMany(data);
+  }
+
 }

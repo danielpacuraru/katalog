@@ -22,8 +22,8 @@ export class ArticleController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post()
-  async create(
+  @Post('one')
+  async createOne(
     @Param('projectId') projectId: string,
     @Body() data: CreateArticleDto
   ): Promise<Article> {
@@ -40,6 +40,31 @@ export class ArticleController {
     }
 
     return article;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post()
+  async create(
+    @Param('projectId') projectId: string,
+    @Body() data
+  ) {
+    /*const exists = await this.articleService.getByCode(data.code, projectId);
+
+    if(exists) {
+      throw new ConflictException();
+    }
+
+    const article = await this.articleService.create(data.code, projectId);
+
+    if(!article) {
+      throw new NotFoundException();
+    }
+
+    return article;*/
+
+    await this.articleService.createMany(data);
+
+    return 'ok';
   }
 
   @UseGuards(JwtAuthGuard)

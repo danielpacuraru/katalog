@@ -34,4 +34,10 @@ export class ArticleService {
     return await this.articleRepository.update(group, articleId, projectId);
   }
 
+  async createMany(data) {
+    const datas = data.map(d => { return { code: d } });
+    console.log(datas);
+    await this.articleRepository.createMany(datas);
+  }
+
 }
