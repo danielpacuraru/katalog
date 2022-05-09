@@ -30,7 +30,7 @@ export class CatalogService {
     this.documentsPath = config.get('PATH_DOCUMENTS');
   }
 
-  public async build(id: string): Promise<void> {
+  /*public async build(id: string): Promise<void> {
     const project: Project = await this.projectService.get2(id);
     const articles: Article[] = await this.articleService.getAll(id);
     const name: string = project.name;
@@ -97,6 +97,6 @@ export class CatalogService {
         return resolve(html);
       })
     });
-  }
+  }*/
 
 }

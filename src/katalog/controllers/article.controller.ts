@@ -3,7 +3,7 @@ import { Controller, UseGuards, Get, Post, Put, Param, Body, NotFoundException, 
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { ArticleService } from '../services/article.service';
 import { Article } from '../schemas/article.schema';
-import { CreateArticleDto } from '../entities/create-article.dto';
+import { CreateArticlesDto } from '../entities/create-articles.dto';
 import { UpdateArticleDto } from '../entities/update-article.dto';
 
 @Controller('projects/:projectId/articles')
@@ -22,49 +22,12 @@ export class ArticleController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('one')
-  async createOne(
-    @Param('projectId') projectId: string,
-    @Body() data: CreateArticleDto
-  ): Promise<Article> {
-    const exists = await this.articleService.getByCode(data.code, projectId);
-
-    if(exists) {
-      throw new ConflictException();
-    }
-
-    const article = await this.articleService.create(data.code, projectId);
-
-    if(!article) {
-      throw new NotFoundException();
-    }
-
-    return article;
-  }
-
-  @UseGuards(JwtAuthGuard)
   @Post()
-  async create(
+  async createAll(
     @Param('projectId') projectId: string,
-    @Body() data
+    @Body() data: CreateArticlesDto
   ) {
-    /*const exists = await this.articleService.getByCode(data.code, projectId);
-
-    if(exists) {
-      throw new ConflictException();
-    }
-
-    const article = await this.articleService.create(data.code, projectId);
-
-    if(!article) {
-      throw new NotFoundException();
-    }
-
-    return article;*/
-
-    await this.articleService.createMany(data);
-
-    return 'ok';
+    return await this.articleService.createAll(data.codes, projectId);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -75,6 +38,20 @@ export class ArticleController {
     @Body() data: UpdateArticleDto
   ): Promise<Article> {
     return await this.articleService.update(data.group, id, projectId);
+  }
+
+
+
+
+
+
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/automate')
+  async automate(
+    @Param('projectId') projectId: string
+  ) {
+    await this.articleService.automate();
   }
 
 }

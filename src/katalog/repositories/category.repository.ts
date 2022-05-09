@@ -14,12 +14,7 @@ export class CategoryRepository {
 
   async get(id: string): Promise<string> {
     const category: Category = await this.categoryModel.findById(id).exec();
-
-    if(!category) {
-      return;
-    }
-
-    return category.category;
+    return category ? category.category : undefined;
   }
 
 }

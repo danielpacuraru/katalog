@@ -3,37 +3,58 @@ import { Document, SchemaTypes } from 'mongoose';
 
 import { Project } from '../schemas/project.schema';
 
-export type ArticleDocument = Article & Document;
-
 @Schema({
-  versionKey: false,
+  collection: 'articles',
+  timestamps: true,
   toJSON: {
-    transform: (doc, ret) => { ret.id = ret._id.toString(); delete ret._id; delete ret.projectId; return ret; }
+    transform: (doc, ret) => {
+      ret.id = ret._id.toString();
+      delete ret._id;
+      delete ret.__v;
+      delete ret.createdAt;
+      delete ret.updatedAt;
+      delete ret.projectId;
+      return ret;
+    }
   }
 })
-export class Article {
+export class IArticle {
 
   @Prop()
   code: string;
 
   @Prop()
-  name: string;
+  name?: string;
 
   @Prop()
-  maker: string;
+  maker?: string;
 
   @Prop()
   thumbnail?: string;
 
   @Prop()
-  doc: string;
+  document?: string;
 
   @Prop()
-  group?: string;
+  class?: string;
+
+  @Prop()
+  category?: string;
+
+  @Prop()
+  status: ArticleStatus;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Project' })
-  projectId: Article;
+  projectId;
 
 }
 
-export const ArticleSchema = SchemaFactory.createForClass(Article);
+export type Article = IArticle & Document;
+
+export const ArticleSchema = SchemaFactory.createForClass(IArticle);
+
+export enum ArticleStatus {
+  QUEUE = 'QUEUE',
+  ERROR = 'ERROR',
+  SUCCESS = 'SUCCESS'
+}

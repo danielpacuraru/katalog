@@ -17,16 +17,16 @@ export class IObject {
   maker: string;
 
   @Prop()
-  thumbnail: string;
-
-  @Prop()
-  document: string;
-
-  @Prop()
   class: string;
 
   @Prop()
   category?: string;
+
+  @Prop()
+  thumbnail: string;
+
+  @Prop()
+  document: string;
 
   @Prop()
   source: ObjectSource;

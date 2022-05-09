@@ -21,7 +21,7 @@ export class CatalogController {
     private catalogService: CatalogService
   ) { }
 
-  @UseGuards(JwtAuthGuard)
+  /*@UseGuards(JwtAuthGuard)
   @Post()
   async build(
     @UserID() userId: string,
@@ -55,6 +55,6 @@ export class CatalogController {
     });
 
     return new StreamableFile(stream);
-  }
+  }*/
 
 }
