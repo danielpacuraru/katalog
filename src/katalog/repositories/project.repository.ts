@@ -17,16 +17,6 @@ export class ProjectRepository {
     return await this.projectModel.find({ userId }).exec();
   }
 
-  /*async get(id: string, userId: string): Promise<Project> {
-    const project: ProjectDocument = await this.projectModel.findById(id).exec();
-
-    if(project.userId.toString() !== userId) {
-      return;
-    }
-
-    return project.toJSON();
-  }*/
-
   async get(id: string): Promise<Project> {
     return await this.projectModel.findById(id).exec();
   }

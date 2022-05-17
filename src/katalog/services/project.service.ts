@@ -17,7 +17,7 @@ export class ProjectService {
   async get(id: string, userId: string): Promise<Project> {
     const project: Project = await this.projectRepository.get(id);
 
-    if(project.userId.toString() !== userId) {
+    if(!project || project.userId.toString() !== userId) {
       return null;
     }
 
