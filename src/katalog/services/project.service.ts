@@ -15,19 +15,17 @@ export class ProjectService {
   }
 
   async get(id: string, userId: string): Promise<Project> {
-    return await this.projectRepository.get(id, userId);
-  }
+    const project: Project = await this.projectRepository.get(id);
 
-  async get2(id: string): Promise<Project> {
-    return await this.projectRepository.get2(id);
+    if(project.userId.toString() !== userId) {
+      return null;
+    }
+
+    return project;
   }
 
   async create(data: CreateProjectDto, userId: string): Promise<Project> {
     return await this.projectRepository.create(data, userId);
-  }
-
-  async setStatus(id: string, status: ProjectStatus): Promise<Project> {
-    return await this.projectRepository.setStatus(id, status);
   }
 
 }

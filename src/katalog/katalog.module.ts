@@ -4,7 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ICategory, CategorySchema } from './schemas/category.schema';
 import { IObject, ObjectSchema } from './schemas/object.schema';
 import { IArticle, ArticleSchema } from './schemas/article.schema';
-import { Project, ProjectSchema } from './schemas/project.schema';
+import { IProject, ProjectSchema } from './schemas/project.schema';
 
 import { CategoryRepository } from './repositories/category.repository';
 import { ObjectRepository } from './repositories/object.repository';
@@ -16,10 +16,8 @@ import { ProjectService } from './services/project.service';
 import { ArticleService } from './services/article.service';
 import { CatalogService } from './services/catalog.service';
 
-import { AdminController } from './controllers/admin.controller';
 import { ProjectController } from './controllers/project.controller';
 import { ArticleController } from './controllers/article.controller';
-import { CatalogController } from './controllers/catalog.controller';
 
 @Module({
   imports: [
@@ -27,7 +25,7 @@ import { CatalogController } from './controllers/catalog.controller';
       { name: ICategory.name, schema: CategorySchema },
       { name: IObject.name, schema: ObjectSchema },
       { name: IArticle.name, schema: ArticleSchema },
-      { name: Project.name, schema: ProjectSchema }
+      { name: IProject.name, schema: ProjectSchema }
     ])
   ],
   providers: [
@@ -42,10 +40,8 @@ import { CatalogController } from './controllers/catalog.controller';
     CatalogService
   ],
   controllers: [
-    AdminController,
     ProjectController,
-    ArticleController,
-    CatalogController
+    ArticleController
   ]
 })
 export class KatalogModule { }
