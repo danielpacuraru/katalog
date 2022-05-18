@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { ProjectRepository } from '../repositories/project.repository';
 import { Project } from '../schemas/project.schema';
 import { CreateProjectDto } from '../entities/create-project.dto';
-import { ProjectStatus } from '../entities/project-status.enum';
 
 @Injectable()
 export class ProjectService {

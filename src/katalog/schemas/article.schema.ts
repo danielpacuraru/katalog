@@ -1,7 +1,11 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, SchemaTypes } from 'mongoose';
 
-import { Project } from '../schemas/project.schema';
+export enum ArticleStatus {
+  QUEUE = 'QUEUE',
+  ERROR = 'ERROR',
+  SUCCESS = 'SUCCESS'
+}
 
 @Schema({
   collection: 'articles',
@@ -20,7 +24,7 @@ import { Project } from '../schemas/project.schema';
 })
 export class IArticle {
 
-  @Prop()
+  @Prop({ required: true })
   code: string;
 
   @Prop()
@@ -41,10 +45,10 @@ export class IArticle {
   @Prop()
   category?: string;
 
-  @Prop()
+  @Prop({ required: true, default: ArticleStatus.QUEUE })
   status: ArticleStatus;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Project' })
+  @Prop({ required: true, type: SchemaTypes.ObjectId, ref: 'Project' })
   projectId;
 
 }
@@ -52,9 +56,3 @@ export class IArticle {
 export type Article = IArticle & Document;
 
 export const ArticleSchema = SchemaFactory.createForClass(IArticle);
-
-export enum ArticleStatus {
-  QUEUE = 'QUEUE',
-  ERROR = 'ERROR',
-  SUCCESS = 'SUCCESS'
-}

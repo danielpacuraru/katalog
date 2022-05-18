@@ -1,7 +1,13 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, SchemaTypes } from 'mongoose';
 
-import { ProjectStatus } from '../entities/project-status.enum';
+export enum ProjectStatus {
+  EMPTY = 'EMPTY',
+  QUEUE = 'QUEUE',
+  WORKS = 'WORKS',
+  READY = 'READY',
+  ERROR = 'ERROR'
+}
 
 @Schema({
   collection: 'projects',

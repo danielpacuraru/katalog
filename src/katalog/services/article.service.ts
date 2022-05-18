@@ -19,10 +19,6 @@ export class ArticleService {
     return await this.articleRepository.getAll(projectId);
   }
 
-  async getByCode(code: string, projectId: string): Promise<Article> {
-    return await this.articleRepository.getByCode(code, projectId);
-  }
-
   async createAll(codes: string[], projectId: string) {
     const existingArticles: Article[] = await this.articleRepository.getAll(projectId);
     const existingCodes: string[] = existingArticles.map(a => a.code);
@@ -32,15 +28,13 @@ export class ArticleService {
 
     const articles = await this.articleRepository.createAll(codes, projectId);
 
-    // TODO - fill articles with available objects
-
-    //this.automate(projectId);
+    this.automate();
 
     return articles;
   }
 
   async automate() {
-    const articles = await this.articleRepository.getQueue();
+    const articles: Article[] = await this.articleRepository.getQueue();
     const codes: string[] = articles.map(a => a.code);
 
     const objects = await this.objectRepository.searchObjects(codes);

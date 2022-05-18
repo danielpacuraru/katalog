@@ -14,7 +14,6 @@ import { ArticleRepository } from './repositories/article.repository';
 import { AwsService } from './services/aws.service';
 import { ProjectService } from './services/project.service';
 import { ArticleService } from './services/article.service';
-import { CatalogService } from './services/catalog.service';
 
 import { ProjectController } from './controllers/project.controller';
 import { ArticleController } from './controllers/article.controller';
@@ -36,8 +35,7 @@ import { ArticleController } from './controllers/article.controller';
 
     AwsService,
     ProjectService,
-    ArticleService,
-    CatalogService
+    ArticleService
   ],
   controllers: [
     ProjectController,

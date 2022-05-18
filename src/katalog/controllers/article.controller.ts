@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Get, Post, Put, Param, Body, NotFoundException, ConflictException } from '@nestjs/common';
+import { Controller, UseGuards, Get, Post, Put, Param, Body } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { ArticleService } from '../services/article.service';
@@ -26,7 +26,7 @@ export class ArticleController {
   async createAll(
     @Param('projectId') projectId: string,
     @Body() data: CreateArticlesDto
-  ) {
+  ): Promise<Article[]> {
     return await this.articleService.createAll(data.codes, projectId);
   }
 
@@ -40,17 +40,9 @@ export class ArticleController {
     return await this.articleService.update(data.group, id, projectId);
   }
 
-
-
-
-
-
-
   @UseGuards(JwtAuthGuard)
   @Get('/automate')
-  async automate(
-    @Param('projectId') projectId: string
-  ) {
+  async automate(): Promise<void> {
     await this.articleService.automate();
   }
 

@@ -4,7 +4,6 @@ import { Model, Types } from 'mongoose';
 
 import { Project, IProject } from '../schemas/project.schema';
 import { CreateProjectDto } from '../entities/create-project.dto';
-import { ProjectStatus } from '../entities/project-status.enum';
 
 @Injectable()
 export class ProjectRepository {
