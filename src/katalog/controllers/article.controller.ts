@@ -26,7 +26,7 @@ export class ArticleController {
   async createAll(
     @Param('projectId') projectId: string,
     @Body() data: CreateArticlesDto
-  ): Promise<Article[]> {
+  ) {
     return await this.articleService.createAll(data.codes, projectId);
   }
 

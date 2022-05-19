@@ -101,16 +101,17 @@ export class ObjectRepository {
   }
 
   private async parseObject(efo: any): Promise<IObject> {
-    console.log(efo);
     const object = {} as IObject;
 
     try {
+      const thumbnailId = efo['Bilde'];
+      const documentId = efo['Dokumenter'].find(d => d['Navn'] === 'FDV')['Id'];
       object._id = efo['Produktnr'];
       object.name = efo['Varetekst'];
       object.maker = efo['Firma'];
       object.class = efo['EtimKode'];
-      object['thumbnailId'] = efo['Bilde'];
-      object['documentId'] = efo['Dokumenter'].find(d => d['Navn'] === 'FDV')['Id'];
+      object['thumbnail'] = `https://efobasen.efo.no/API/Produktfiler/Skalert?id=${thumbnailId}&w=350&h=350&m=3`;
+      object['document'] = `https://efobasen.efo.no/API/Produktfiler/LastNed?id=${documentId}`;
     }
     catch(e) {
       return null;
@@ -119,32 +120,21 @@ export class ObjectRepository {
     object.category = await this.categoryRepository.get(object.class);
     object.source = ObjectSource.EFOBASEN;
 
-    if(object._id === '1132520') {
-      return object;
-    }
-
-    const x = object['thumbnailId'];
-    const y = object._id;
-    const z = object['documentId'];
-    object.thumbnail = `https://efobasen.efo.no/API/Produktfiler/Skalert?id=${x}&w=350&h=350&m=3`;
-    object.document = `https://efobasen.efo.no/API/Produktfiler/LastNed?id=${z}`;
-
-    //await this.download(object.thumbnail, join(this.thumbnailsPath, `${y}.jpg`));
-    //await this.download(object.document, join(this.documentsPath, `${y}.pdf`));
-    //await this.upload();
-
-    await this.aws.downUp(z);
-
     return object;
   }
 
-  private async download(url: string, path: string): Promise<void> {
-    const response = await fetch(url);
-    const fileStream = createWriteStream(path);
-    await new Promise((resolve, reject) => {
-      response.body.pipe(fileStream);
-      response.body.on('error', reject);
-      fileStream.on('finish', resolve);
+  public async download(id: string, url: string): Promise<boolean> {
+    const res = await fetch(url);
+
+    if(res.status !== 200) {
+      return false;
+    }
+
+    const stream = createWriteStream(join(this.documentsPath, `${id}.pdf`));
+
+    return new Promise((resolve) => {
+      res.body.pipe(stream);
+      stream.on('finish', () => resolve(true));
     });
   }
 

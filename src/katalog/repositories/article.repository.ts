@@ -68,4 +68,9 @@ export class ArticleRepository {
     return await this.articleModel.findByIdAndUpdate(articleId, { group }).exec();
   }
 
+  async updateByCode(code: string, obj: any) {
+    const x = await this.articleModel.updateMany({ code }, obj);
+    console.log(x);
+  }
+
 }

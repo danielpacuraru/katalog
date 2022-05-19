@@ -6,13 +6,15 @@ import { ArticleRepository } from '../repositories/article.repository';
 import { ObjectRepository } from '../repositories/object.repository';
 import { Article, IArticle, ArticleStatus } from '../schemas/article.schema';
 import { Object, IObject } from '../schemas/object.schema';
+import { EfoService } from '../services/efo.service';
 
 @Injectable()
 export class ArticleService {
 
   constructor(
     private articleRepository: ArticleRepository,
-    private objectRepository: ObjectRepository
+    private objectRepository: ObjectRepository,
+    private efoService: EfoService
   ) { }
 
   async getAll(projectId: string): Promise<Article[]> {
@@ -26,9 +28,10 @@ export class ArticleService {
     codes = uniq(codes);
     codes = difference(codes, existingCodes);
 
-    const articles = await this.articleRepository.createAll(codes, projectId);
+    const articles = await this.efoService.find(codes);
 
-    this.automate();
+    console.log(articles);
+    console.log(articles.length);
 
     return articles;
   }
@@ -36,30 +39,6 @@ export class ArticleService {
   async automate() {
     const articles: Article[] = await this.articleRepository.getQueue();
     const codes: string[] = articles.map(a => a.code);
-
-    const objects = await this.objectRepository.searchObjects(codes);
-    console.log(objects, objects.length);
-
-    
-    /*if(!article) {
-      return null;
-    }
-
-    const object: Object = await this.objectRepository.getOrFind(article.code);
-
-    if(!object) {
-      article.status = ArticleStatus.ERROR;
-    }
-    else {
-      article.status = ArticleStatus.SUCCESS;
-      article.name = object.name;
-      article.maker = object.maker;
-      article.thumbnail = object.thumbnail;
-      article.category = object.category;
-    }
-    
-    await article.save();
-    await this.automation(projectId);*/
   }
 
   async create(code: string, projectId: string) {

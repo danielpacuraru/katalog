@@ -28,12 +28,6 @@ export class IObject {
   category?: string;
 
   @Prop()
-  thumbnail: string;
-
-  @Prop()
-  document: string;
-
-  @Prop()
   source: ObjectSource;
 
 }

@@ -12,6 +12,7 @@ import { ProjectRepository } from './repositories/project.repository';
 import { ArticleRepository } from './repositories/article.repository';
 
 import { AwsService } from './services/aws.service';
+import { EfoService } from './services/efo.service';
 import { ProjectService } from './services/project.service';
 import { ArticleService } from './services/article.service';
 
@@ -34,6 +35,7 @@ import { ArticleController } from './controllers/article.controller';
     ArticleRepository,
 
     AwsService,
+    EfoService,
     ProjectService,
     ArticleService
   ],
