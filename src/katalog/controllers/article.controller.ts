@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Get, Post, Put, Param, Body } from '@nestjs/common';
+import { Controller, UseGuards, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { ArticleService } from '../services/article.service';
@@ -41,8 +41,17 @@ export class ArticleController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async delete(
+    @Param('projectId') projectId: string,
+    @Param('id') id: string,
+  ): Promise<Article> {
+    return await this.articleService.delete(id, projectId);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('/automate')
-  async automate(): Promise<void> {
+  async automate() {
     await this.articleService.automate();
   }
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Model, Types } from 'mongoose';
-import { uniq, difference } from 'lodash';
+import { uniq, difference, flatten, chunk } from 'lodash';
 
 import { ArticleRepository } from '../repositories/article.repository';
 import { ObjectRepository } from '../repositories/object.repository';
@@ -28,17 +28,28 @@ export class ArticleService {
     codes = uniq(codes);
     codes = difference(codes, existingCodes);
 
-    const articles = await this.efoService.find(codes);
+    // TODO - skip cached articles
 
-    console.log(articles);
-    console.log(articles.length);
+    const articles = codes.map(code => {
+      return {
+        code: code,
+        status: ArticleStatus.QUEUE
+      }
+    });
 
-    return articles;
+    await this.articleRepository.createAll(articles, projectId);
+
+    this.automate();
+
+    return await this.articleRepository.getAll(projectId);
   }
 
   async automate() {
     const articles: Article[] = await this.articleRepository.getQueue();
     const codes: string[] = articles.map(a => a.code);
+
+    const codeChunks = chunk(codes, 5);
+    await this.efoService.search(codeChunks[0]);
   }
 
   async create(code: string, projectId: string) {
@@ -71,6 +82,10 @@ export class ArticleService {
 
   async update(group: string, articleId: string, projectId: string): Promise<Article> {
     return await this.articleRepository.update(group, articleId, projectId);
+  }
+
+  async delete(id: string, projectId: string): Promise<Article> {
+    return await this.articleRepository.delete(id);
   }
 
 }

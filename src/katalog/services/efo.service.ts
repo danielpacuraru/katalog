@@ -3,10 +3,18 @@ import { ConfigService } from '@nestjs/config';
 import fetch from 'node-fetch';
 import { createWriteStream } from 'fs';
 import { join } from 'path';
-import { flatten } from 'lodash';
 
-import { IObject, ObjectSource } from '../schemas/object.schema';
 import { CategoryRepository } from '../repositories/category.repository';
+import { ArticleSource } from '../schemas/article.schema';
+
+export interface Art {
+  code: string,
+  name: string,
+  maker: string,
+  category: string,
+  group: string,
+  source: ArticleSource
+}
 
 @Injectable()
 export class EfoService {
@@ -22,24 +30,17 @@ export class EfoService {
     this.documentsPath = config.get('PATH_DOCUMENTS');
   }
 
-  async find(codes: string[]): Promise<IObject[]> {
-    const promises = [];
-
-    for(let page = 1; page <= Math.ceil(codes.length / 50); page++) {
-      promises.push(this.search(codes, page));
-    }
-
-    const nestedObjects: Array<Array<IObject>> = await Promise.all(promises);
-    const objects: IObject[] = flatten(nestedObjects);
-
-    return objects;
+  async search(codes: string[]): Promise<Art[]> {
+    const articles: Art[] = await this.searchArticles(codes);
+    console.log(articles);
+    return articles;
   }
 
-  private async search(codes: string[], page: number): Promise<IObject[]> {
+  private async searchArticles(codes: string[]): Promise<Art[]> {
     const url = 'https://efobasen.efo.no/API/AlleProdukter/HentProdukter';
     const filter = {
       Statusvalg: [1, 8],
-      Page: page,
+      Page: 1,
       Pagesize: 50,
       Visningsmodus: 2,
       EtimEgenskaper: [],
@@ -67,79 +68,69 @@ export class EfoService {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(filter)
     }
-    const res = await fetch(url, options);
-    const data = await res.json();
-    const objects: IObject[] = [];
+    const response = await fetch(url, options);
+    const data = await response.json();
 
-    if(res.status !== 200) {
+    if(response.status !== 200) {
       return [];
     }
 
-    for(const item of data['Produkter']) {
-      const object = await this.parse(item);
-      if(object) objects.push(object);
+    const articles: Art[] = [];
+    const promises = [];
+
+    for(const efo of data['Produkter']) {
+      promises.push(this.parseArticle(efo));
     }
 
-    return objects;
+    const parsedArticles = await Promise.all(promises);
+
+    for(const article of parsedArticles) {
+      if(article) articles.push(article);
+    }
+
+    return articles;
   }
 
-  private async parse(efo: any): Promise<IObject> {
-    const object = {} as IObject;
+  private async parseArticle(efo: any): Promise<Art> {
+    const article = {} as Art;
 
     try {
-      object._id = efo['Produktnr'];
-      object.name = efo['Varetekst'];
-      object.maker = efo['Firma'];
-      object.class = efo['EtimKode'];
-      object['thumbnailId'] = efo['Bilde'];
-      object['documentId'] = efo['Dokumenter'].find(d => d['Navn'] === 'FDV')['Id'];
+      article.code = efo['Produktnr'];
+      article.name = efo['Varetekst'];
+      article.maker = efo['Firma'];
+      article.category = efo['EtimKode'];
+      article['thumbnailId'] = efo['Bilde'];
+      article['documentId'] = efo['Dokumenter'].find(d => d['Navn'] === 'FDV')['Id'];
     }
     catch(e) {
       return null;
     }
 
-    object.category = await this.categoryRepository.get(object.class);
-    object.source = ObjectSource.EFOBASEN;
+    article.group = await this.categoryRepository.get(article.category);
+    article.source = ArticleSource.EFOBASEN;
 
-    return object;
-  }
-
-  async download(object: IObject) {
-    const promise1 = this.downloadThumbnail(object);
-    const promise2 = this.downloadDocument(object);
-
-    return await Promise.all([promise1, promise2]);
-  }
-
-  private async downloadThumbnail(object: IObject) {
-    const url = `https://efobasen.efo.no/API/Produktfiler/Skalert?id=${object['thumbnailId']}&w=350&h=350&m=3`;
-    const res = await fetch(url);
-
-    if(res.status !== 200) {
-      return false;
+    try {
+      const thumbnailUrl = `https://efobasen.efo.no/API/Produktfiler/Skalert?id=${article['thumbnailId']}&w=350&h=350&m=3`;
+      const documentUrl = `https://efobasen.efo.no/API/Produktfiler/LastNed?id=${article['documentId']}`;
+      await this.downloadArticleFile(thumbnailUrl, join(this.thumbnailsPath, `${article.code}.jpg`));
+      await this.downloadArticleFile(documentUrl, join(this.documentsPath, `${article.code}.pdf`));
+      delete article['thumbnailId'];
+      delete article['documentId'];
+    }
+    catch(e) {
+      return null;
     }
 
-    const stream = createWriteStream(join(this.thumbnailsPath, `${object._id}.jpg`));
-
-    return new Promise((resolve) => {
-      res.body.pipe(stream);
-      stream.on('finish', () => resolve(true));
-    });
+    return article;
   }
 
-  private async downloadDocument(object: IObject) {
-    const url = `https://efobasen.efo.no/API/Produktfiler/LastNed?id=${object['documentId']}`;
+  private async downloadArticleFile(url: string, path: string): Promise<void> {
     const res = await fetch(url);
-
-    if(res.status !== 200) {
-      return false;
-    }
-
-    const stream = createWriteStream(join(this.documentsPath, `${object._id}.pdf`));
-
-    return new Promise((resolve) => {
+    const stream = createWriteStream(path);
+    await new Promise((resolve, reject) => {
       res.body.pipe(stream);
-      stream.on('finish', () => resolve(true));
+      res.body.on('error', reject);
+      stream.on('finish', resolve);
     });
   }
 

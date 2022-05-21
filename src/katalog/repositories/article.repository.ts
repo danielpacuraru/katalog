@@ -19,11 +19,10 @@ export class ArticleRepository {
     return await this.articleModel.find({ status: ArticleStatus.QUEUE }).limit(50).exec();
   }
 
-  async createAll(codes: string[], projectId: string): Promise<Article[]> {
-    const articles = codes.map(code => {
+  async createAll(list: any, projectId: string): Promise<Article[]> {
+    const articles = list.map(item => {
       return {
-        code: code,
-        status: ArticleStatus.QUEUE,
+        ...item,
         projectId: new Types.ObjectId(projectId)
       }
     });
@@ -71,6 +70,10 @@ export class ArticleRepository {
   async updateByCode(code: string, obj: any) {
     const x = await this.articleModel.updateMany({ code }, obj);
     console.log(x);
+  }
+
+  async delete(id: string): Promise<Article> {
+    return await this.articleModel.findByIdAndDelete(id);
   }
 
 }
