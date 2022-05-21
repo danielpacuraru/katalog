@@ -31,15 +31,13 @@ export class EfoService {
   }
 
   async search(codes: string[]): Promise<Art[]> {
-    const articles: Art[] = await this.searchArticles(codes);
-    console.log(articles);
-    return articles;
+    return await this.searchArticles(codes);
   }
 
   private async searchArticles(codes: string[]): Promise<Art[]> {
     const url = 'https://efobasen.efo.no/API/AlleProdukter/HentProdukter';
     const filter = {
-      Statusvalg: [1, 8],
+      Statusvalg: [1, 8, 2],
       Page: 1,
       Pagesize: 50,
       Visningsmodus: 2,

@@ -3,8 +3,8 @@ import { Document, SchemaTypes } from 'mongoose';
 
 export enum ArticleStatus {
   QUEUE = 'QUEUE',
-  ERROR = 'ERROR',
-  SUCCESS = 'SUCCESS'
+  SUCCESS = 'SUCCESS',
+  ERROR = 'ERROR'
 }
 
 export enum ArticleSource {
@@ -39,16 +39,10 @@ export class IArticle {
   maker?: string;
 
   @Prop()
-  thumbnail?: string;
-
-  @Prop()
-  document?: string;
-
-  @Prop()
-  class?: string;
-
-  @Prop()
   category?: string;
+
+  @Prop()
+  group?: string;
 
   @Prop()
   source?: string;

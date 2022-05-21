@@ -49,7 +49,34 @@ export class ArticleService {
     const codes: string[] = articles.map(a => a.code);
 
     const codeChunks = chunk(codes, 5);
-    await this.efoService.search(codeChunks[0]);
+    const foundArticles = [];
+    for(const chunk of codeChunks) {
+      const y = await this.efoService.search(chunk);
+      foundArticles.push(y);
+    }
+    const newArticles = flatten(foundArticles);
+
+    for(const code of codes) {
+      const article = newArticles.find(a => a.code === code);
+      if(article) {
+        await this.articleRepository.updateByCode(code, {
+          name: article.name,
+          maker: article.maker,
+          category: article.category,
+          group: article.group,
+          source: article.source,
+          status: ArticleStatus.SUCCESS
+        });
+      }
+      else {
+        await this.articleRepository.updateByCode(code, {
+          status: ArticleStatus.ERROR
+        });
+      }
+    }
+
+    console.log(newArticles);
+    console.log(newArticles.length);
   }
 
   async create(code: string, projectId: string) {
