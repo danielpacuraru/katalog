@@ -48,6 +48,8 @@ export class ArticleService {
     const articles: Article[] = await this.articleRepository.getQueue();
     const codes: string[] = articles.map(a => a.code);
 
+    if(codes.length === 0) return;
+
     const codeChunks = chunk(codes, 5);
     const foundArticles = [];
     for(const chunk of codeChunks) {
@@ -75,36 +77,7 @@ export class ArticleService {
       }
     }
 
-    console.log(newArticles);
-    console.log(newArticles.length);
-  }
-
-  async create(code: string, projectId: string) {
-    const object: Object = await this.objectRepository.get(code);
-
-    if(object) {
-      console.log('in DB');
-      console.log(object);
-      return 'found';
-    }
-
-    console.log(object);
-
-    const object2: Object = await this.objectRepository.find(code);
-
-    console.log('found');
-    console.log(object2);
-
-
-    /*const item: Item = await this.itemService.getByCode(code);
-
-    if(!item) {
-      return;
-    }
-
-    return await this.articleRepository.create({ code, name: item.name, maker: item.maker, thumbnail: item.thumbnail, doc: item.doc, group: item.group }, projectId);*/
-
-    return 'not found';
+    this.automate();
   }
 
   async update(group: string, articleId: string, projectId: string): Promise<Article> {

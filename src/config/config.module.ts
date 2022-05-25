@@ -15,8 +15,8 @@ import * as Joi from 'joi';
         PATH_ARCHIVES: Joi.string(),
         JWT_SECRET: Joi.string(),
         MONGO_URL: Joi.string(),
-        AMAZON_S3_KEY: Joi.string(),
-        AMAZON_S3_SECRET: Joi.string()
+        SPACES_KEY: Joi.string(),
+        SPACES_SECRET: Joi.string()
       }),
       validationOptions: {
         allowUnknown: true,

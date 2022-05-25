@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+import { nanoid } from 'nanoid';
 
 import { Project, IProject } from '../schemas/project.schema';
 import { CreateProjectDto } from '../entities/create-project.dto';
@@ -20,8 +21,17 @@ export class ProjectRepository {
     return await this.projectModel.findById(id).exec();
   }
 
+  async getByUUID(uuid: string): Promise<Project> {
+    return await this.projectModel.findOne({ uuid }).exec();
+  }
+
   async create(data: CreateProjectDto, userId: string): Promise<Project> {
-    const project: Project = new this.projectModel({ ...data, userId: new Types.ObjectId(userId) });
+    const project: Project = new this.projectModel({
+      ...data,
+      catalog: nanoid(6),
+      userId: new Types.ObjectId(userId)
+    });
+
     return await project.save();
   }
 
