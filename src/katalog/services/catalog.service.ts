@@ -10,6 +10,7 @@ import { ArticleRepository } from '../repositories/article.repository';
 import { Project } from '../schemas/project.schema';
 import { Article } from '../schemas/article.schema';
 import { GROUPS } from '../entities/groups.dict';
+import { Catalog } from '../entities/catalog.interface';
 
 @Injectable()
 export class CatalogService {
@@ -27,19 +28,25 @@ export class CatalogService {
     this.documentsPath = config.get('PATH_DOCUMENTS');
   }
 
-  async get(uuid: string) {console.log(uuid);
+  async get(uuid: string): Promise<Catalog> {
     const project: Project = await this.projectRepository.getByUUID(uuid);
 
     if(!project) {
       throw new NotFoundException();
     }
 
-    const projectPath: string = join(this.projectsPath, project._id.toString());
+    const catalog = await this.storage.getCatalogInfo(project._id);
 
-    console.log(projectPath);
+    if(!catalog) {
+      throw new NotFoundException();
+    }
 
-    // const x = await this.storage.upload(join(this.projectsPath, 'project.zip'), 'none');
-    // console.log(x);
+    return {
+      name: project.name,
+      url: catalog.url,
+      size: catalog.size,
+      date: new Date()
+    }
   }
 
   async create(project: Project): Promise<void> {

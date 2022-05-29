@@ -4,19 +4,20 @@ import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { ProjectByIdPipe } from '../entities/project-by-id.pipe';
 import { CatalogService } from '../services/catalog.service';
 import { Project } from '../schemas/project.schema';
+import { Catalog } from '../entities/catalog.interface';
 
-@Controller('projects/:projectId/catalogs')
+@Controller('projects/:projectId/catalog')
 export class CatalogController {
 
   constructor(
     private catalogService: CatalogService
   ) { }
 
-  @Get(':id')
+  @Get()
   async get(
-    @Param('id') id: string
-  ) {
-    return await this.catalogService.get(id);
+    @Param('projectId') uuid: string
+  ): Promise<Catalog> {
+    return await this.catalogService.get(uuid);
   }
 
   @UseGuards(JwtAuthGuard)

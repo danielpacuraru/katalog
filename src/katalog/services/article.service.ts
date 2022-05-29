@@ -38,9 +38,6 @@ export class ArticleService {
     });
 
     await this.articleRepository.createAll(articles, projectId);
-
-    this.automate();
-
     return await this.articleRepository.getAll(projectId);
   }
 

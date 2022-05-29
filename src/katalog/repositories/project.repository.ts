@@ -28,7 +28,7 @@ export class ProjectRepository {
   async create(data: CreateProjectDto, userId: string): Promise<Project> {
     const project: Project = new this.projectModel({
       ...data,
-      catalog: nanoid(6),
+      uuid: nanoid(6),
       userId: new Types.ObjectId(userId)
     });
 

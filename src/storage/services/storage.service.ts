@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { S3Client } from '@aws-sdk/client-s3';
+import { S3Client, HeadObjectCommand } from '@aws-sdk/client-s3';
 import { Upload } from "@aws-sdk/lib-storage";
 import * as archiver from 'archiver';
 import { PassThrough } from 'stream';
@@ -22,6 +22,24 @@ export class StorageService {
         secretAccessKey: config.get('SPACES_SECRET')
       }
     });
+  }
+
+  async getCatalogInfo(projectId: string) {
+    const params = {
+      Bucket: 'katalog',
+      Key: `projects/${projectId}.zip`
+    }
+
+    try {
+      const catalog = await this.s3.send(new HeadObjectCommand(params));
+      return {
+        url: `https://katalog.ams3.digitaloceanspaces.com/projects/${projectId}.zip`,
+        size: catalog.ContentLength
+      }
+    }
+    catch(e) {
+      return null;
+    }
   }
 
   async uploadProjectZip(path: string, url: string, name: string): Promise<void> {
