@@ -49,4 +49,8 @@ export class ObjectRepository {
     return await this.find(id);
   }
 
+  async create(data: IObject): Promise<void> {
+    await this.objectModel.updateOne({ _id: data._id }, { ...data }, { upsert: true });
+  }
+
 }

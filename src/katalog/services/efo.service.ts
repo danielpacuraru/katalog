@@ -5,16 +5,9 @@ import { createWriteStream } from 'fs';
 import { join } from 'path';
 
 import { CategoryRepository } from '../repositories/category.repository';
-import { ArticleSource } from '../schemas/article.schema';
-
-export interface Art {
-  code: string,
-  name: string,
-  maker: string,
-  category: string,
-  group: string,
-  source: ArticleSource
-}
+import { ObjectRepository } from '../repositories/object.repository';
+import { IObject, ObjectSource } from '../schemas/object.schema';
+import { StorageService } from '../../storage/services/storage.service';
 
 @Injectable()
 export class EfoService {
@@ -24,17 +17,15 @@ export class EfoService {
 
   constructor(
     private config: ConfigService,
-    private categoryRepository: CategoryRepository
+    private categoryRepository: CategoryRepository,
+    private objectRepository: ObjectRepository,
+    private storageService: StorageService
   ) {
     this.thumbnailsPath = config.get('PATH_THUMBNAILS');
     this.documentsPath = config.get('PATH_DOCUMENTS');
   }
 
-  async search(codes: string[]): Promise<Art[]> {
-    return await this.searchArticles(codes);
-  }
-
-  private async searchArticles(codes: string[]): Promise<Art[]> {
+  async search(codes: string[]): Promise<IObject[]> {
     const url = 'https://efobasen.efo.no/API/AlleProdukter/HentProdukter';
     const filter = {
       Statusvalg: [1, 8, 2],
@@ -73,53 +64,55 @@ export class EfoService {
       return [];
     }
 
-    const articles: Art[] = [];
-    const promises = [];
+    const objects: IObject[] = [];
+    const promiseList = [];
 
     for(const efo of data['Produkter']) {
-      promises.push(this.parseArticle(efo));
+      promiseList.push(this.parse(efo));
     }
 
-    const parsedArticles = await Promise.all(promises);
+    const promiseResult = await Promise.all(promiseList);
 
-    for(const article of parsedArticles) {
-      if(article) articles.push(article);
+    for(const object of promiseResult) {
+      if(object) objects.push(object);
     }
 
-    return articles;
+    return objects;
   }
 
-  private async parseArticle(efo: any): Promise<Art> {
-    const article = {} as Art;
+  private async parse(efo: any): Promise<IObject> {
+    const object = {} as IObject;
 
     try {
-      article.code = efo['Produktnr'];
-      article.name = efo['Varetekst'];
-      article.maker = efo['Firma'];
-      article.category = efo['EtimKode'];
-      article['thumbnailId'] = efo['Bilde'];
-      article['documentId'] = efo['Dokumenter'].find(d => d['Navn'] === 'FDV')['Id'];
+      object._id = efo['Produktnr'];
+      object.name = efo['Varetekst'];
+      object.maker = efo['Firma'];
+      object.category = efo['EtimKode'];
+      object['thumbnailId'] = efo['Bilde'];
+      object['documentId'] = efo['Dokumenter'].find(d => d['Navn'] === 'FDV')['Id'];
     }
     catch(e) {
       return null;
     }
 
-    article.group = await this.categoryRepository.get(article.category);
-    article.source = ArticleSource.EFOBASEN;
+    object.group = await this.categoryRepository.get(object.category);
+    object.source = ObjectSource.EFOBASEN;
 
     try {
-      const thumbnailUrl = `https://efobasen.efo.no/API/Produktfiler/Skalert?id=${article['thumbnailId']}&w=350&h=350&m=3`;
-      const documentUrl = `https://efobasen.efo.no/API/Produktfiler/LastNed?id=${article['documentId']}`;
-      await this.downloadArticleFile(thumbnailUrl, join(this.thumbnailsPath, `${article.code}.jpg`));
-      await this.downloadArticleFile(documentUrl, join(this.documentsPath, `${article.code}.pdf`));
-      delete article['thumbnailId'];
-      delete article['documentId'];
+      const thumbnailUrl = `https://efobasen.efo.no/API/Produktfiler/Skalert?id=${object['thumbnailId']}&w=350&h=350&m=3`;
+      const documentUrl = `https://efobasen.efo.no/API/Produktfiler/LastNed?id=${object['documentId']}`;
+      await this.downloadArticleFile(thumbnailUrl, join(this.thumbnailsPath, `${object._id}.jpg`));
+      await this.downloadArticleFile(documentUrl, join(this.documentsPath, `${object._id}.pdf`));
+      await this.storageService.uploadThumbnail(join(this.thumbnailsPath, `${object._id}.jpg`));
+      delete object['thumbnailId'];
+      delete object['documentId'];
     }
     catch(e) {
       return null;
     }
 
-    return article;
+    await this.objectRepository.create(object);
+    return object;
   }
 
   private async downloadArticleFile(url: string, path: string): Promise<void> {

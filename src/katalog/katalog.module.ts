@@ -14,6 +14,7 @@ import { ProjectRepository } from './repositories/project.repository';
 import { ArticleRepository } from './repositories/article.repository';
 
 import { EfoService } from './services/efo.service';
+import { SyncService } from './services/sync.service';
 import { ProjectService } from './services/project.service';
 import { ArticleService } from './services/article.service';
 import { CatalogService } from './services/catalog.service';
@@ -39,6 +40,7 @@ import { CatalogController } from './controllers/catalog.controller';
     ArticleRepository,
 
     EfoService,
+    SyncService,
     ProjectService,
     ArticleService,
     CatalogService

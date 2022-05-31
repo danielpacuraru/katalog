@@ -37,44 +37,7 @@ export class ArticleService {
       }
     });
 
-    await this.articleRepository.createAll(articles, projectId);
-    return await this.articleRepository.getAll(projectId);
-  }
-
-  async automate() {
-    const articles: Article[] = await this.articleRepository.getQueue();
-    const codes: string[] = articles.map(a => a.code);
-
-    if(codes.length === 0) return;
-
-    const codeChunks = chunk(codes, 5);
-    const foundArticles = [];
-    for(const chunk of codeChunks) {
-      const y = await this.efoService.search(chunk);
-      foundArticles.push(y);
-    }
-    const newArticles = flatten(foundArticles);
-
-    for(const code of codes) {
-      const article = newArticles.find(a => a.code === code);
-      if(article) {
-        await this.articleRepository.updateByCode(code, {
-          name: article.name,
-          maker: article.maker,
-          category: article.category,
-          group: article.group,
-          source: article.source,
-          status: ArticleStatus.SUCCESS
-        });
-      }
-      else {
-        await this.articleRepository.updateByCode(code, {
-          status: ArticleStatus.ERROR
-        });
-      }
-    }
-
-    this.automate();
+    return await this.articleRepository.createAll(articles, projectId);
   }
 
   async update(group: string, articleId: string, projectId: string): Promise<Article> {

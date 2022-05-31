@@ -7,11 +7,6 @@ export enum ArticleStatus {
   ERROR = 'ERROR'
 }
 
-export enum ArticleSource {
-  EFOBASEN = 'EFOBASEN',
-  MANUAL = 'MANUAL'
-}
-
 @Schema({
   collection: 'articles',
   timestamps: true,
@@ -36,6 +31,9 @@ export class IArticle {
   name?: string;
 
   @Prop()
+  thumbnail?: string;
+
+  @Prop()
   maker?: string;
 
   @Prop()
@@ -43,9 +41,6 @@ export class IArticle {
 
   @Prop()
   group?: string;
-
-  @Prop()
-  source?: string;
 
   @Prop({ required: true, default: ArticleStatus.QUEUE })
   status: ArticleStatus;

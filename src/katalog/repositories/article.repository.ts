@@ -15,8 +15,8 @@ export class ArticleRepository {
     return await this.articleModel.find({ projectId }).exec();
   }
 
-  async getQueue(): Promise<Article[]> {
-    return await this.articleModel.find({ status: ArticleStatus.QUEUE }).limit(50).exec();
+  async getQueue(limit: number): Promise<Article[]> {
+    return await this.articleModel.find({ status: ArticleStatus.QUEUE }).limit(limit).exec();
   }
 
   async createAll(list: any, projectId: string): Promise<Article[]> {

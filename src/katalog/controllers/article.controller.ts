@@ -49,12 +49,4 @@ export class ArticleController {
     return await this.articleService.delete(id, projectId);
   }
 
-  // TEST
-
-  @UseGuards(JwtAuthGuard)
-  @Get('/automate')
-  async automate() {
-    await this.articleService.automate();
-  }
-
 }

@@ -30,6 +30,9 @@ export class IProject {
   @Prop({ required: true })
   uuid: string;
 
+  @Prop({ required: true })
+  articles: number;
+
   @Prop({ required: true, default: ProjectStatus.EMPTY })
   status: ProjectStatus;
 

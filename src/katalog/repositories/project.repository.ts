@@ -29,6 +29,7 @@ export class ProjectRepository {
     const project: Project = new this.projectModel({
       ...data,
       uuid: nanoid(6),
+      articles: 0,
       userId: new Types.ObjectId(userId)
     });
 

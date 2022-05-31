@@ -4,7 +4,8 @@ import { S3Client, HeadObjectCommand } from '@aws-sdk/client-s3';
 import { Upload } from "@aws-sdk/lib-storage";
 import * as archiver from 'archiver';
 import { PassThrough } from 'stream';
-import { join } from 'path';
+import { join, basename } from 'path';
+import { createReadStream } from 'fs';
 
 @Injectable()
 export class StorageService {
@@ -56,6 +57,20 @@ export class StorageService {
         Bucket: 'katalog',
         Key: url,
         Body: pass,
+        ACL: 'public-read'
+      }
+    });
+
+    await upload.done();
+  }
+
+  async uploadThumbnail(path: string): Promise<void> {
+    const upload = new Upload({
+      client: this.s3,
+      params: {
+        Bucket: 'katalog',
+        Key: join('thumbnails', basename(path)),
+        Body: createReadStream(path),
         ACL: 'public-read'
       }
     });

@@ -22,10 +22,10 @@ export class IObject {
   maker: string;
 
   @Prop()
-  class: string;
+  category: string;
 
   @Prop()
-  category?: string;
+  group?: string;
 
   @Prop()
   source: ObjectSource;
