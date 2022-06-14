@@ -5,7 +5,6 @@ import { ConfigService } from '@nestjs/config';
 
 import { ConfigsModule } from './config/config.module';
 import { AuthModule } from './auth/auth.module';
-import { StorageModule } from './storage/storage.module';
 import { KatalogModule } from './katalog/katalog.module';
 
 @Module({
@@ -19,7 +18,6 @@ import { KatalogModule } from './katalog/katalog.module';
     }),
     ScheduleModule.forRoot(),
     AuthModule,
-    StorageModule,
     KatalogModule
   ]
 })

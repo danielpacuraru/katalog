@@ -7,7 +7,7 @@ import { join } from 'path';
 import { CategoryRepository } from '../repositories/category.repository';
 import { ObjectRepository } from '../repositories/object.repository';
 import { IObject, ObjectSource } from '../schemas/object.schema';
-import { StorageService } from '../../storage/services/storage.service';
+import { StorageService } from '../services/storage.service';
 
 @Injectable()
 export class EfoService {

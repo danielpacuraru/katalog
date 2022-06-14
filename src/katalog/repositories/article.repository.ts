@@ -19,31 +19,18 @@ export class ArticleRepository {
     return await this.articleModel.find({ status: ArticleStatus.QUEUE }).limit(limit).exec();
   }
 
-  async createAll(list: any, projectId: string): Promise<Article[]> {
-    const articles = list.map(item => {
-      return {
-        ...item,
-        projectId: new Types.ObjectId(projectId)
-      }
-    });
-
+  async createAll(articles: IArticle[]): Promise<Article[]> {
     return await this.articleModel.insertMany(articles);
+  }
+
+  async deleteAll(projectId: string): Promise<void> {
+    await this.articleModel.deleteMany({ projectId }).exec();
   }
 
   /*async getAll(projectId: string): Promise<Article[]> {
     const articles: ArticleDocument[] = await this.articleModel.find({ projectId }).exec();
 
     return articles.map(a => a.toJSON());
-  }
-
-  async getByCode(code: string, projectId: string): Promise<Article> {
-    const article: ArticleDocument = await this.articleModel.findOne({ code, projectId }).exec();
-
-    if(!article) {
-      return;
-    }
-
-    return article.toJSON();
   }
 
   async create(data, projectId: string): Promise<Article> {

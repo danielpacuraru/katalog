@@ -36,4 +36,12 @@ export class ProjectRepository {
     return await project.save();
   }
 
+  async updateArticles(inc: number, projectId: string): Promise<Project> {
+    return await this.projectModel.findByIdAndUpdate(projectId, { $inc : { 'articles' : inc } }, { new: true }).exec();
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.projectModel.findByIdAndDelete(id).exec();
+  }
+
 }

@@ -4,13 +4,15 @@ import { rm, mkdir, copyFile, access } from 'fs/promises';
 import { join } from 'path';
 import { uniq } from 'lodash';
 
-import { StorageService } from '../../storage/services/storage.service';
+import { StorageService } from '../services/storage.service';
 import { ProjectRepository } from '../repositories/project.repository';
 import { ArticleRepository } from '../repositories/article.repository';
+import { CatalogRepository } from '../repositories/catalog.repository';
 import { Project } from '../schemas/project.schema';
-import { Article } from '../schemas/article.schema';
+import { Article, ArticleStatus } from '../schemas/article.schema';
 import { GROUPS } from '../entities/groups.dict';
-import { Catalog } from '../entities/catalog.interface';
+import { Catalog, ICatalog } from '../schemas/catalog.schema';
+import { File } from '../entities/file.interface';
 
 @Injectable()
 export class CatalogService {
@@ -22,13 +24,14 @@ export class CatalogService {
     private config: ConfigService,
     private storage: StorageService,
     private projectRepository: ProjectRepository,
-    private articleRepository: ArticleRepository
+    private articleRepository: ArticleRepository,
+    private catalogRepository: CatalogRepository
   ) {
     this.projectsPath = config.get('PATH_PROJECTS');
     this.documentsPath = config.get('PATH_DOCUMENTS');
   }
 
-  async get(uuid: string): Promise<Catalog> {
+  /*async get(uuid: string): Promise<Catalog> {
     const project: Project = await this.projectRepository.getByUUID(uuid);
 
     if(!project) {
@@ -47,43 +50,41 @@ export class CatalogService {
       size: catalog.size,
       date: new Date()
     }
-  }
+  }*/
 
-  async create(project: Project): Promise<void> {
-    const projectId = project._id.toString();
-    const projectPath: string = join(this.projectsPath, projectId);
-    const projectUrl: string = join('projects', `${projectId}.zip`);
-    const projectName: string = project.name;
-
-    await this.build(project);
-    await this.storage.uploadProjectZip(projectPath, projectUrl, projectName);
-    await rm(projectPath, { recursive: true, force: true });
-  }
-
-  async build(project: Project): Promise<void> {
-    const projectPath: string = join(this.projectsPath, project._id.toString());
-    const articles: Article[] = await this.articleRepository.getAll(project._id.toString());
-    const groups: string[] = uniq(articles.map(a => a.group).filter(g => g !== undefined));
+  async create(project: Project): Promise<any> {
+    const projectId: string = project._id.toString();
+    const catalogPath: string = join(this.projectsPath, projectId);
+    const articles: Article[] = await this.articleRepository.getAll(projectId);
+    const documents: Article[] = articles.filter(article => article.group !== undefined && article.status === ArticleStatus.SUCCESS);
+    const folders: string[] = uniq(documents.map(document => document.group));
 
     // clean
-    await rm(projectPath, { recursive: true, force: true });
+    await rm(catalogPath, { recursive: true, force: true });
 
     // create main folder
-    await mkdir(projectPath);
+    await mkdir(catalogPath);
 
     // create subfolders
-    for(const group of groups) {
-      await mkdir(join(projectPath, `${GROUPS[group]}`));
+    for(const folder of folders) {
+      await mkdir(join(catalogPath, `${GROUPS[folder]}`));
     }
 
     // copy documents
-    for(const article of articles) {
-      if(article.group) {
-        const src = join(this.documentsPath, `${article.code}.pdf`);
-        const dest = join(projectPath, `${GROUPS[article.group]}`, `${article.group}_${article.code}.pdf`);
-        await copyFile(src, dest);
-      }
+    for(const document of documents) {
+      const src = join(this.documentsPath, `${document.code}.pdf`);
+      const dest = join(catalogPath, `${GROUPS[document.group]}`, `${document.group}_${document.code}.pdf`);
+      await copyFile(src, dest);
     }
+
+    // upload catalog
+    const catalogFile: File = await this.storage.uploadCatalog(project);
+
+    // clean up again
+    await rm(catalogPath, { recursive: true, force: true });
+
+    // save
+    await this.catalogRepository.create({ ...catalogFile, docs: documents.length }, projectId);
   }
 
 }

@@ -1,30 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { ConfigService } from '@nestjs/config';
 import { Model } from 'mongoose';
-import fetch from 'node-fetch';
-import { join } from 'path';
-import { createWriteStream, createReadStream } from 'fs';
 
-import { Object, IObject, ObjectSource } from '../schemas/object.schema';
-import { CategoryRepository } from '../repositories/category.repository';
+import { Object, IObject } from '../schemas/object.schema';
 
 @Injectable()
 export class ObjectRepository {
 
-  private thumbnailsPath: string;
-  private documentsPath: string;
+  constructor(@InjectModel(IObject.name) private objectModel: Model<Object>) { }
 
-  constructor(
-    private config: ConfigService,
-    @InjectModel(IObject.name) private objectModel: Model<Object>,
-    private categoryRepository: CategoryRepository
-  ) {
-    this.thumbnailsPath = config.get('PATH_THUMBNAILS');
-    this.documentsPath = config.get('PATH_DOCUMENTS');
+  async get(code: string): Promise<Object> {
+    return await this.objectModel.findById(code).exec();
   }
 
-  async get(id: string): Promise<Object> {
+  async getMany(codes: string[]): Promise<Object[]> {
+    return await this.objectModel.find().where('_id').in(codes).exec();
+  }
+
+  async create(data: IObject): Promise<void> {
+    await this.objectModel.updateOne({ _id: data._id }, { ...data }, { upsert: true });
+  }
+
+  /*async get(id: string): Promise<Object> {
     return await this.objectModel.findById(id).exec();
   }
 
@@ -51,6 +48,6 @@ export class ObjectRepository {
 
   async create(data: IObject): Promise<void> {
     await this.objectModel.updateOne({ _id: data._id }, { ...data }, { upsert: true });
-  }
+  }*/
 
 }

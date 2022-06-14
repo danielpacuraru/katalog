@@ -1,7 +1,8 @@
-import { Controller, UseGuards, Get, Post, Param, Body, NotFoundException } from '@nestjs/common';
+import { Controller, UseGuards, Get, Post, Delete, Param, Body, NotFoundException } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { UserID } from '../../auth/decorators/user-id.decorator';
+import { ProjectByIdPipe } from '../entities/project-by-id.pipe';
 import { ProjectService } from '../services/project.service';
 import { Project } from '../schemas/project.schema';
 import { CreateProjectDto } from '../entities/create-project.dto';
@@ -43,6 +44,17 @@ export class ProjectController {
     @Body() data: CreateProjectDto
   ): Promise<Project> {
     return await this.projectService.create(data, userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async delete(
+    @Param('id', ProjectByIdPipe) project: Project,
+    @Param('id') id: string
+  ): Promise<void> {
+    console.log(project);
+    console.log(id);
+    return await this.projectService.delete(id);
   }
 
 }

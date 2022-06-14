@@ -1,6 +1,5 @@
-export interface Catalog {
+export interface File {
   name: string;
   url: string;
   size: number;
-  date: Date;
 }
