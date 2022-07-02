@@ -14,6 +14,14 @@ export class CatalogController {
   ) { }
 
   @UseGuards(JwtAuthGuard)
+  @Get()
+  async get(
+    @Param('projectId', ProjectByIdPipe) project: Project
+  ): Promise<Catalog> {
+    return await this.catalogService.get(project._id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post()
   async create(
     @Param('projectId', ProjectByIdPipe) project: Project

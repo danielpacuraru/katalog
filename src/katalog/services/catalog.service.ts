@@ -52,6 +52,10 @@ export class CatalogService {
     }
   }*/
 
+  async get(projectId: string): Promise<Catalog> {
+    return await this.catalogRepository.get(projectId);
+  }
+
   async create(project: Project): Promise<any> {
     const projectId: string = project._id.toString();
     const catalogPath: string = join(this.projectsPath, projectId);

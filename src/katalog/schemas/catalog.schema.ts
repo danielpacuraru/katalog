@@ -6,7 +6,16 @@ const uuidx = () => nanoid(6);
 
 @Schema({
   collection: 'catalogs',
-  timestamps: true
+  timestamps: true,
+  toJSON: {
+    transform: (doc, ret) => {
+      ret.id = ret._id.toString();
+      delete ret._id;
+      delete ret.__v;
+      delete ret.projectId;
+      return ret;
+    }
+  }
 })
 export class ICatalog {
 
