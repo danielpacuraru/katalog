@@ -80,6 +80,15 @@ export class EfoService {
     return objects;
   }
 
+  private searchDocument(id: string, list: any[]): string {
+    const doc1 = list.find(d => d['Navn'] === 'FDV');
+    const doc2 = list.find(d => d['Navn'] === 'Produktblad');
+    if(doc1) return doc1['Id'];
+    if(doc2) return doc2['Id'];
+    if(list.length) console.log(id, 'NOT FOUND', list);
+    throw 'no doc';
+  }
+
   private async parse(efo: any): Promise<IObject> {
     const object = {} as IObject;
 
@@ -89,7 +98,7 @@ export class EfoService {
       object.maker = efo['Firma'];
       object.category = efo['EtimKode'];
       object['thumbnailId'] = efo['Bilde'];
-      object['documentId'] = efo['Dokumenter'].find(d => d['Navn'] === 'FDV')['Id'];
+      object['documentId'] = this.searchDocument(efo['Produktnr'], efo['Dokumenter']);
     }
     catch(e) {
       return null;

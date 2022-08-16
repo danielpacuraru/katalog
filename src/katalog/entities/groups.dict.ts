@@ -77,5 +77,8 @@ export const GROUPS = {
   '754': '754 - Utendørs alarm og signal',
   '755': '755 - Utendørs lyd og bilde',
   '756': '756 - Utendørs automatisering',
-  '759': '759 - Andre installasjoner for utendørs tele og automatisering'
+  '759': '759 - Andre installasjoner for utendørs tele og automatisering',
+  '800': '800',
+  '801': '801',
+  '882': '882'
 }

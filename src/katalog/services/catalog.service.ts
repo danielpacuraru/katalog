@@ -56,12 +56,51 @@ export class CatalogService {
     return await this.catalogRepository.get(projectId);
   }
 
+  async create2(project: Project): Promise<any> {
+    const projectId: string = project._id.toString();
+    const catalogPath: string = join(this.projectsPath, projectId);
+    const articles: Article[] = await this.articleRepository.getAll(projectId);
+    const documents: Article[] = articles.filter(article => article.status === ArticleStatus.SUCCESS);
+    const folders: string[] = uniq(documents.map(document => document.category));
+
+    console.log(documents);
+    console.log(folders);
+
+    // clean
+    await rm(catalogPath, { recursive: true, force: true });
+
+    // create main folder
+    await mkdir(catalogPath);
+
+    // create subfolders
+    for(const folder of folders) {
+      await mkdir(join(catalogPath, folder));
+    }
+
+    // copy documents
+    for(const document of documents) {
+      const src = join(this.documentsPath, `${document.code}.pdf`);
+      const dest = join(catalogPath, document.category, `${document.category}_${document.code}.pdf`);
+      await copyFile(src, dest);
+    }
+
+    // upload catalog
+    const catalogFile: File = await this.storage.uploadCatalog(project);
+
+    // clean up again
+    await rm(catalogPath, { recursive: true, force: true });
+
+    // save
+    await this.catalogRepository.create({ ...catalogFile, docs: documents.length }, projectId);
+  }
+
   async create(project: Project): Promise<any> {
     const projectId: string = project._id.toString();
     const catalogPath: string = join(this.projectsPath, projectId);
     const articles: Article[] = await this.articleRepository.getAll(projectId);
     const documents: Article[] = articles.filter(article => article.group !== undefined && article.status === ArticleStatus.SUCCESS);
     const folders: string[] = uniq(documents.map(document => document.group));
+    console.log(folders);
 
     // clean
     await rm(catalogPath, { recursive: true, force: true });
@@ -77,7 +116,9 @@ export class CatalogService {
     // copy documents
     for(const document of documents) {
       const src = join(this.documentsPath, `${document.code}.pdf`);
-      const dest = join(catalogPath, `${GROUPS[document.group]}`, `${document.group}_${document.code}.pdf`);
+      const destFilename = `${document.group}_${document.code}_${document.name}.pdf`;
+      const dest = join(catalogPath, `${GROUPS[document.group]}`, destFilename.replace('/', '-').replace('/', '-').replace('/', '-'));
+
       await copyFile(src, dest);
     }
 
@@ -85,7 +126,7 @@ export class CatalogService {
     const catalogFile: File = await this.storage.uploadCatalog(project);
 
     // clean up again
-    await rm(catalogPath, { recursive: true, force: true });
+    //await rm(catalogPath, { recursive: true, force: true });
 
     // save
     await this.catalogRepository.create({ ...catalogFile, docs: documents.length }, projectId);
