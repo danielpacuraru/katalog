@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Get, Post, Param } from '@nestjs/common';
+import { Controller, UseGuards, Get, Post, Param, NotFoundException } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { ProjectByIdPipe } from '../entities/project-by-id.pipe';
@@ -18,7 +18,13 @@ export class CatalogController {
   async get(
     @Param('projectId', ProjectByIdPipe) project: Project
   ): Promise<Catalog> {
-    return await this.catalogService.get(project._id);
+    const catalog = await this.catalogService.get(project._id);
+
+    if(!catalog) {
+      throw new NotFoundException();
+    }
+
+    return catalog;
   }
 
   @UseGuards(JwtAuthGuard)

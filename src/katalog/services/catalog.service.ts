@@ -27,7 +27,7 @@ export class CatalogService {
     private articleRepository: ArticleRepository,
     private catalogRepository: CatalogRepository
   ) {
-    this.projectsPath = config.get('PATH_PROJECTS');
+    this.projectsPath = config.get('PATH_CATALOGS');
     this.documentsPath = config.get('PATH_DOCUMENTS');
   }
 
@@ -122,6 +122,16 @@ export class CatalogService {
       await copyFile(src, dest);
     }
 
+    // copy rest of documents on root folder
+    const tempDoc: Article[] = articles.filter(article => article.group === undefined && article.status === ArticleStatus.SUCCESS);
+    for(const document of tempDoc) {
+      const src = join(this.documentsPath, `${document.code}.pdf`);
+      const destFilename = `${document.code}_${document.name}.pdf`;
+      const dest = join(catalogPath, destFilename.replace('/', '-').replace('/', '-').replace('/', '-'));
+
+      await copyFile(src, dest);
+    }
+
     // upload catalog
     const catalogFile: File = await this.storage.uploadCatalog(project);
 
@@ -131,5 +141,35 @@ export class CatalogService {
     // save
     await this.catalogRepository.create({ ...catalogFile, docs: documents.length }, projectId);
   }
+
+
+
+
+  /*async buildCatalogFolder(projectId: string): Promise<any> {
+    const catalogPath: string = join(this.catalogsPath, projectId);
+    const articles: Article[] = await this.articleRepository.getAll(projectId);
+    const documents: Article[] = articles.filter(article => article.group !== undefined && article.status === ArticleStatus.SUCCESS);
+    const folders: string[] = uniq(documents.map(document => document.group));
+
+    // clean
+    await rm(catalogPath, { recursive: true, force: true });
+
+    // create main folder
+    await mkdir(catalogPath);
+
+    // create subfolders
+    for(const folder of folders) {
+      await mkdir(join(catalogPath, `${GROUPS[folder]}`));
+    }
+
+    // copy documents
+    for(const document of documents) {
+      const src = join(this.documentsPath, `${document.code}.pdf`);
+      const destFilename = `${document.group}_${document.code}_${document.name}.pdf`;
+      const dest = join(catalogPath, `${GROUPS[document.group]}`, destFilename.replace('/', '-').replace('/', '-').replace('/', '-'));
+
+      await copyFile(src, dest);
+    }
+  }*/
 
 }

@@ -27,7 +27,7 @@ export class StorageService {
         secretAccessKey: config.get('SPACES_SECRET')
       }
     });
-    this.projectsPath = config.get('PATH_PROJECTS');
+    this.projectsPath = config.get('PATH_CATALOGS');
   }
 
   async getCatalogInfo(projectId: string) {

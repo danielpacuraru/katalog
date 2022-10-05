@@ -24,6 +24,10 @@ import { ProjectController } from './controllers/project.controller';
 import { ArticleController } from './controllers/article.controller';
 import { CatalogController } from './controllers/catalog.controller';
 
+import { IEfobasen, EfobasenSchema } from './schemas/efobasen.schema';
+import { EfobasenRepository } from './repositories/efobasen.repository';
+import { EfoSyncService } from './services/loadefo.service';
+
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -31,7 +35,8 @@ import { CatalogController } from './controllers/catalog.controller';
       { name: IObject.name, schema: ObjectSchema },
       { name: IArticle.name, schema: ArticleSchema },
       { name: IProject.name, schema: ProjectSchema },
-      { name: ICatalog.name, schema: CatalogSchema }
+      { name: ICatalog.name, schema: CatalogSchema },
+      { name: IEfobasen.name, schema: EfobasenSchema },
     ])
   ],
   providers: [
@@ -40,13 +45,15 @@ import { CatalogController } from './controllers/catalog.controller';
     ProjectRepository,
     ArticleRepository,
     CatalogRepository,
+    EfobasenRepository,
 
     EfoService,
     SyncService,
     StorageService,
     ProjectService,
     ArticleService,
-    CatalogService
+    CatalogService,
+    EfoSyncService,
   ],
   controllers: [
     ProjectController,

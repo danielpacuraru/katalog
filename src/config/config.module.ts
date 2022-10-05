@@ -11,7 +11,7 @@ import * as Joi from 'joi';
         MODE: Joi.string(),
         PATH_THUMBNAILS: Joi.string(),
         PATH_DOCUMENTS: Joi.string(),
-        PATH_PROJECTS: Joi.string(),
+        PATH_CATALOGS: Joi.string(),
         JWT_SECRET: Joi.string(),
         MONGO_URL: Joi.string(),
         SPACES_KEY: Joi.string(),

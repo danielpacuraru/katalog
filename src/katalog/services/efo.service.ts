@@ -89,7 +89,7 @@ export class EfoService {
     throw 'no doc';
   }
 
-  private async parse(efo: any): Promise<IObject> {
+  private async parse(efo: any): Promise<IObject> {console.log(efo['Dokumenter']);
     const object = {} as IObject;
 
     try {
